@@ -1,0 +1,451 @@
+.game-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.game-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.game-info {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.game-info p {
+  margin: 0;
+  font-weight: bold;
+  color: #333;
+}
+
+.score-board {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+  border-radius: 15px;
+  color: white;
+}
+
+.player-score {
+  text-align: center;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  min-width: 150px;
+}
+
+.player-score h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.2rem;
+}
+
+.player-score p {
+  margin: 5px 0;
+  font-size: 1rem;
+}
+
+.player-status {
+  font-weight: bold;
+  margin-top: 10px !important;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.game-status {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 15px;
+  background: #e9ecef;
+  border-radius: 10px;
+}
+
+.current-phase {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 10px 0;
+}
+
+.current-player {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
+}
+
+.chairs-container {
+  margin-bottom: 30px;
+}
+
+.chairs-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.chair {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 3px solid transparent;
+}
+
+.chair.available {
+  background: linear-gradient(45deg, #4ecdc4, #44a08d);
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.chair.available:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.chair.unavailable {
+  background: #6c757d;
+  color: #adb5bd;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.chair.selected {
+  background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+  border-color: #fff;
+}
+
+.chair.used {
+  background: linear-gradient(45deg, #6c757d, #495057);
+  color: #adb5bd;
+  cursor: not-allowed;
+  opacity: 0.4;
+  position: relative;
+}
+
+.chair.used::after {
+  content: '×';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  font-weight: bold;
+  color: #dc3545;
+}
+
+.game-controls {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.button {
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+.confirm-button {
+  background: linear-gradient(45deg, #28a745, #20c997);
+  color: white;
+}
+
+.confirm-button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.back-button {
+  background: linear-gradient(45deg, #6c757d, #495057);
+  color: white;
+}
+
+.game-result {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.final-score {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+.final-score p {
+  margin: 10px 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.victory-reason {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #28a745;
+  margin: 15px 0;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #28a745;
+}
+
+.result-display {
+  text-align: center;
+  padding: 40px;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  border-radius: 20px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.result-content {
+  margin: 30px 0;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+}
+
+.result-content p {
+  margin: 10px 0;
+  font-size: 1.1rem;
+}
+
+.shock-result {
+  margin: 20px 0;
+  padding: 20px;
+  background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+  border-radius: 15px;
+  animation: pulse 1s infinite;
+}
+
+.point-result {
+  margin: 20px 0;
+  padding: 20px;
+  background: linear-gradient(45deg, #28a745, #20c997);
+  border-radius: 15px;
+  animation: bounce 1s infinite;
+}
+
+.result-timer {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 20px;
+  opacity: 0.8;
+}
+
+.score-reset {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  border: 2px solid #fff;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+@media (max-width: 768px) {
+  .game-container {
+    padding: 15px;
+  }
+  
+  .chairs-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  
+  .chair {
+    font-size: 1.2rem;
+  }
+  
+  .score-board {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .game-controls {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .game-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+.end-screen-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffe29f 0%, #ffa751 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.end-screen-card {
+  background: #fff7ed;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(255, 167, 81, 0.18);
+  padding: 40px 32px 32px 32px;
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  animation: fadeIn 0.8s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.winner-area {
+  margin-bottom: 24px;
+}
+.trophy {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 8px;
+  color: #ff9800;
+}
+.winner-title {
+  font-size: 2rem;
+  color: #ff9800;
+  margin: 0 0 8px 0;
+}
+.winner-name {
+  color: #ff6b01;
+  font-weight: bold;
+  font-size: 2.2rem;
+}
+.congrats {
+  font-size: 1.2rem;
+  color: #ff9800;
+  margin-bottom: 0;
+}
+.final-score-cards {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  margin: 32px 0 24px 0;
+}
+.score-card {
+  background: #fff3e0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(255, 167, 81, 0.08);
+  padding: 18px 20px;
+  min-width: 120px;
+  flex: 1;
+}
+.score-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.1rem;
+  color: #ff9800;
+}
+.score-num {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ff6b01;
+}
+.end-btn-row {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 18px;
+}
+.x-share-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #000;
+  color: #fff;
+  font-weight: bold;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.x-share-btn:hover {
+  background: #333;
+  color: #fff;
+}
+.x-logo {
+  font-size: 1.3em;
+  font-family: 'Arial Black', 'Arial', sans-serif;
+  margin-right: 2px;
+  line-height: 1;
+}
+.end-btn {
+  margin-top: 0;
+  font-size: 1rem;
+  padding: 12px 16px;
+  background: linear-gradient(45deg, #ff9800, #ffb347);
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(255,167,81,0.08);
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.end-btn:hover {
+  background: linear-gradient(45deg, #ffb347, #ff9800);
+  color: #fff3e0;
+} 
