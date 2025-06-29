@@ -31,14 +31,42 @@ if (isProduction) {
   });
 }
 
+// エラーハンドリング
+app.use((err, req, res, next) => {
+  console.error('エラーが発生しました:', err);
+  res.status(500).json({
+    error: 'Internal Server Error',
+    message: err.message,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// 404ハンドリング
+app.use((req, res) => {
+  console.log('404エラー:', req.method, req.url);
+  res.status(404).json({
+    error: 'Not Found',
+    message: `Route ${req.method} ${req.url} not found`,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // ルートエンドポイント（ヘルスチェック用）
 app.get('/', (req, res) => {
-  res.json({
+  const serverInfo = {
     message: '電気椅子ゲームサーバー',
     status: 'running',
     timestamp: new Date().toISOString(),
-    environment: isProduction ? 'production' : 'development'
-  });
+    environment: isProduction ? 'production' : 'development',
+    port: PORT,
+    uptime: process.uptime(),
+    pid: process.pid,
+    cwd: process.cwd(),
+    version: '1.0.0'
+  };
+  
+  console.log('ルートエンドポイントアクセス:', serverInfo);
+  res.json(serverInfo);
 });
 
 // ゲームルームの管理
@@ -530,4 +558,8 @@ server.listen(PORT, () => {
   console.log(`📊 部屋一覧: http://localhost:${PORT}/rooms`);
   console.log(`🔌 Socket.IO接続準備完了`);
   console.log(`📦 本番環境: ${isProduction ? 'はい' : 'いいえ'}`);
+  console.log(`🔍 プロセスID: ${process.pid}`);
+  console.log(`📁 作業ディレクトリ: ${process.cwd()}`);
+  console.log(`🌍 環境変数 PORT: ${process.env.PORT}`);
+  console.log(`🌍 環境変数 NODE_ENV: ${process.env.NODE_ENV}`);
 }); 
