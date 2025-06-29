@@ -3,155 +3,192 @@
 ## 前提条件
 - Node.js 16以上がインストール済み
 - Gitがインストール済み
-- ドメインを取得済み
+- ドメイン: `electric-chair.com` を取得済み
 
-## デプロイ方法
+## 🎯 推奨デプロイ方法: Vercel + Railway
 
-### 方法1: Vercel + Railway (推奨)
+### ステップ1: バックエンド (Railway) のデプロイ
 
-#### 1. フロントエンド (Vercel)
-1. [Vercel](https://vercel.com)にアカウント作成・ログイン
-2. GitHubリポジトリをインポート
+#### 1. Railwayアカウント作成・ログイン
+1. [Railway](https://railway.app)にアクセス
+2. GitHubアカウントでログイン
+
+#### 2. プロジェクト作成
+1. "New Project" → "Deploy from GitHub repo"
+2. `yatsu3/denki-isu` リポジトリを選択
+3. "Deploy Now" をクリック
+
+#### 3. プロジェクト設定
+1. プロジェクト名: `denki-isu-backend`
+2. Root Directory: `server`
+3. Build Command: `npm install`
+4. Start Command: `npm start`
+
+#### 4. 環境変数設定
+Railwayのダッシュボードで以下を設定：
+```
+NODE_ENV=production
+PORT=3001
+```
+
+#### 5. カスタムドメイン設定
+1. "Settings" → "Domains"
+2. "Generate Domain" で一時的なドメインを取得
+3. 例: `denki-isu-backend-production.up.railway.app`
+4. このドメインをメモ（フロントエンド設定で使用）
+
+### ステップ2: フロントエンド (Vercel) のデプロイ
+
+#### 1. Vercelアカウント作成・ログイン
+1. [Vercel](https://vercel.com)にアクセス
+2. GitHubアカウントでログイン
+
+#### 2. プロジェクト作成
+1. "New Project" → "Import Git Repository"
+2. `yatsu3/denki-isu` リポジトリを選択
 3. プロジェクト設定:
    - Framework Preset: `Create React App`
+   - Root Directory: `./` (デフォルト)
    - Build Command: `npm run build`
    - Output Directory: `build`
    - Install Command: `npm install`
-4. 環境変数設定:
-   - `REACT_APP_SOCKET_URL`: バックエンドのURL (後で設定)
 
-#### 2. バックエンド (Railway)
-1. [Railway](https://railway.app)にアカウント作成・ログイン
-2. GitHubリポジトリをインポート
-3. プロジェクト設定:
-   - Root Directory: `server`
-   - Build Command: `npm install`
-   - Start Command: `npm start`
-4. 環境変数設定:
-   - `NODE_ENV`: `production`
-   - `PORT`: `3001`
-
-#### 3. ドメイン設定
-1. Vercelでカスタムドメインを設定
-2. Railwayでカスタムドメインを設定
-3. フロントエンドの環境変数 `REACT_APP_SOCKET_URL` をバックエンドのURLに更新
-
-### 方法2: Heroku
-
-#### 1. Heroku CLIインストール
-```bash
-# macOS
-brew tap heroku/brew && brew install heroku
-
-# Windows
-# https://devcenter.heroku.com/articles/heroku-cli からダウンロード
+#### 3. 環境変数設定
+Vercelのダッシュボードで以下を設定：
+```
+REACT_APP_SOCKET_URL=https://denki-isu-backend-production.up.railway.app
 ```
 
-#### 2. デプロイ
-```bash
-# Herokuにログイン
-heroku login
+#### 4. カスタムドメイン設定
+1. "Settings" → "Domains"
+2. "Add Domain" → `electric-chair.com`
+3. DNS設定:
+   - Type: `CNAME`
+   - Name: `@`
+   - Value: `cname.vercel-dns.com`
 
-# アプリケーション作成
-heroku create your-app-name
+### ステップ3: DNS設定
 
-# 環境変数設定
-heroku config:set NODE_ENV=production
+#### ドメインプロバイダーでの設定
+1. ドメインプロバイダーのDNS管理画面にアクセス
+2. 以下のレコードを追加：
 
-# デプロイ
-git add .
-git commit -m "Deploy to Heroku"
-git push heroku main
+**Aレコード:**
+```
+Type: A
+Name: @
+Value: 76.76.19.36
 ```
 
-#### 3. ドメイン設定
-```bash
-# カスタムドメイン追加
-heroku domains:add your-domain.com
-
-# SSL証明書追加
-heroku certs:auto:enable
+**CNAMEレコード:**
+```
+Type: CNAME
+Name: www
+Value: electric-chair.com
 ```
 
-### 方法3: Netlify + Render
+### ステップ4: SSL証明書の確認
 
-#### 1. フロントエンド (Netlify)
-1. [Netlify](https://netlify.com)にアカウント作成・ログイン
-2. GitHubリポジトリをインポート
-3. ビルド設定:
-   - Build command: `npm run build`
-   - Publish directory: `build`
-4. 環境変数設定:
-   - `REACT_APP_SOCKET_URL`: バックエンドのURL
+#### Vercel
+- 自動的にSSL証明書が発行されます
+- 数分で有効になります
 
-#### 2. バックエンド (Render)
-1. [Render](https://render.com)にアカウント作成・ログイン
-2. GitHubリポジトリをインポート
-3. サービス設定:
-   - Type: `Web Service`
-   - Root Directory: `server`
-   - Build Command: `npm install`
-   - Start Command: `npm start`
-4. 環境変数設定:
-   - `NODE_ENV`: `production`
+#### Railway
+- 自動的にSSL証明書が発行されます
+- カスタムドメイン設定時に有効になります
 
-## ローカルテスト
+## 🔧 動作確認
 
-### 本番環境のテスト
+### 1. フロントエンド確認
 ```bash
-# フロントエンドビルド
-npm run build
-
-# サーバー起動（本番モード）
-cd server
-NODE_ENV=production npm start
+# ブラウザでアクセス
+https://electric-chair.com
 ```
 
-### 環境変数確認
+### 2. バックエンド確認
 ```bash
-# フロントエンド
-echo $REACT_APP_SOCKET_URL
+# ヘルスチェック
+curl https://denki-isu-backend-production.up.railway.app/health
 
-# バックエンド
-echo $NODE_ENV
-echo $PORT
+# 部屋一覧（デバッグ用）
+curl https://denki-isu-backend-production.up.railway.app/rooms
 ```
 
-## トラブルシューティング
+### 3. Socket.IO接続確認
+1. ブラウザの開発者ツールを開く
+2. Consoleタブで接続ログを確認
+3. NetworkタブでWebSocket接続を確認
 
-### よくある問題
-1. **Socket.IO接続エラー**
-   - CORS設定を確認
-   - 環境変数のURLが正しいか確認
+## 🚨 トラブルシューティング
 
-2. **ビルドエラー**
-   - Node.jsバージョンを確認（16以上）
-   - 依存関係を再インストール
+### よくある問題と解決方法
 
-3. **ドメイン設定エラー**
-   - DNS設定を確認
-   - SSL証明書の有効性を確認
+#### 1. Socket.IO接続エラー
+**症状:** フロントエンドでSocket.IO接続エラー
+**解決方法:**
+- 環境変数 `REACT_APP_SOCKET_URL` が正しく設定されているか確認
+- Railwayのバックエンドが正常に起動しているか確認
+- CORS設定を確認
 
-### ログ確認
+#### 2. ドメインアクセスエラー
+**症状:** `electric-chair.com` にアクセスできない
+**解決方法:**
+- DNS設定が正しく反映されているか確認（最大24時間かかる場合があります）
+- Vercelのドメイン設定が完了しているか確認
+
+#### 3. ビルドエラー
+**症状:** Vercelでビルドが失敗する
+**解決方法:**
+- Node.jsバージョンを確認（16以上）
+- 依存関係のインストールエラーを確認
+- ビルドログを詳細に確認
+
+### ログ確認方法
+
+#### Vercel
 ```bash
-# Heroku
-heroku logs --tail
-
-# Railway
-railway logs
-
-# Vercel
+# Vercel CLIでログ確認
+npm i -g vercel
+vercel login
 vercel logs
 ```
 
-## セキュリティ考慮事項
-- 環境変数で機密情報を管理
-- HTTPS通信を強制
-- CORS設定を適切に設定
-- レート制限の実装を検討
+#### Railway
+```bash
+# Railway CLIでログ確認
+npm i -g @railway/cli
+railway login
+railway logs
+```
 
-## パフォーマンス最適化
-- 画像の最適化
-- コード分割の実装
-- CDNの活用
-- キャッシュ戦略の実装 
+## 📊 監視とメンテナンス
+
+### 1. パフォーマンス監視
+- Vercel Analytics でフロントエンドのパフォーマンスを監視
+- Railway Metrics でバックエンドのリソース使用量を監視
+
+### 2. エラー監視
+- ブラウザのコンソールエラーを定期的に確認
+- サーバーログを定期的に確認
+
+### 3. セキュリティ
+- 定期的に依存関係の脆弱性をチェック
+- `npm audit` を実行してセキュリティ問題を確認
+
+## 🎉 デプロイ完了後の確認事項
+
+- [ ] フロントエンドが `https://electric-chair.com` でアクセス可能
+- [ ] バックエンドが正常に起動している
+- [ ] Socket.IO接続が確立される
+- [ ] ゲームが正常に動作する
+- [ ] 部屋作成・参加が正常に動作する
+- [ ] 椅子選択が正常に動作する
+- [ ] ゲーム終了処理が正常に動作する
+
+## 📞 サポート
+
+問題が発生した場合は、以下を確認してください：
+1. 各サービスのダッシュボードでログを確認
+2. ブラウザの開発者ツールでエラーを確認
+3. 環境変数が正しく設定されているか確認
+4. DNS設定が正しく反映されているか確認 
