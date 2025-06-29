@@ -215,8 +215,8 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       return;
     }
 
-    // 新しい選択（1つの椅子のみ選択可能）
-    console.log('椅子選択処理開始:', chairNumber);
+    // 新しい選択（1つのイスのみ選択可能）
+    console.log('イス選択処理開始:', chairNumber);
     setLocalSelectedChair(chairNumber);
     
     console.log('Socket.IO selectChair呼び出し前');
@@ -234,7 +234,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     });
     
     if (localSelectedChair === null) {
-      console.log('選択された椅子がないため、処理を中止');
+      console.log('選択されたイスがないため、処理を中止');
       return;
     }
     
@@ -261,7 +261,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     const chairIsEmpty = gameState.chairs[chairNumber] === null;
     const chairIsUsed = gameState.usedChairs && gameState.usedChairs.includes(chairNumber);
     
-    console.log('椅子選択条件チェック:', {
+    console.log('イス選択条件チェック:', {
       chairNumber,
       myPlayerType,
       currentTurn: gameState.currentTurn,
@@ -287,15 +287,15 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
   const getCurrentPhaseText = () => {
     if (gameState.currentPhase === 'omote') {
       if (gameState.currentTurn === 'player1') {
-        return '表の攻撃: プレイヤー1が電流を流す椅子を選択中';
+        return '表の攻撃: プレイヤー1が電流を流すイスを選択中';
       } else {
-        return '表の攻撃: プレイヤー2が座る椅子を選択中';
+        return '表の攻撃: プレイヤー2が座るイスを選択中';
       }
     } else if (gameState.currentPhase === 'ura') {
       if (gameState.currentTurn === 'player2') {
-        return '裏の攻撃: プレイヤー2が電流を流す椅子を選択中';
+        return '裏の攻撃: プレイヤー2が電流を流すイスを選択中';
       } else {
-        return '裏の攻撃: プレイヤー1が座る椅子を選択中';
+        return '裏の攻撃: プレイヤー1が座るイスを選択中';
       }
     } else {
       return '選択中';
@@ -390,7 +390,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
 
   if (gameState.gameOver) {
     // X共有用のテキスト生成
-    const shareText = `電気椅子ゲーム 結果\n勝者: ${gameState.winner}\nプレイヤー1: ${gameState.player1Score}点/電流${gameState.player1Shocks}回\nプレイヤー2: ${gameState.player2Score}点/電流${gameState.player2Shocks}回`;
+    const shareText = `電気イスゲーム 結果\n勝者: ${gameState.winner}\nプレイヤー1: ${gameState.player1Score}点/電流${gameState.player1Shocks}回\nプレイヤー2: ${gameState.player2Score}点/電流${gameState.player2Shocks}回`;
     const shareUrl = encodeURIComponent(window.location.origin);
     const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${shareUrl}`;
 
@@ -436,8 +436,8 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
         <div className="result-display">
           <h2>結果発表</h2>
           <div className="result-content">
-            <p>プレイヤー1が選択した椅子: {resultData.player1Chair + 1}番</p>
-            <p>プレイヤー2が選択した椅子: {resultData.player2Chair + 1}番</p>
+            <p>プレイヤー1が選択したイス: {resultData.player1Chair + 1}番</p>
+            <p>プレイヤー2が選択したイス: {resultData.player2Chair + 1}番</p>
             
             {resultData.isShock ? (
               <div className="shock-result">
@@ -461,7 +461,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
   return (
     <div className="game-container">
       <div className="game-header">
-        <h2>電気椅子ゲーム</h2>
+        <h2>電気イスゲーム</h2>
         <p>部屋番号: {actualRoomCode}</p>
         <p>ラウンド: {gameState.currentRound}/8</p>
         <p>フェーズ: {gameState.currentPhase === 'omote' ? '表の攻撃' : gameState.currentPhase === 'ura' ? '裏の攻撃' : '選択中'}</p>
@@ -494,20 +494,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
             ⚡ あなたのターンです ⚡
           </p>
         )}
-        {/* デバッグ情報を表示 */}
-        <div style={{ 
-          backgroundColor: '#f8f9fa', 
-          padding: '10px', 
-          marginTop: '10px', 
-          borderRadius: '5px', 
-          fontSize: '0.8rem' 
-        }}>
-          <p>デバッグ: プレイヤー{playerType}, 現在のプレイヤー: {gameState.currentTurn}, 自分のターン: {checkIsMyTurn() ? 'はい' : 'いいえ'}</p>
-          <p>フェーズ: {gameState.currentPhase === 'omote' ? '表の攻撃' : gameState.currentPhase === 'ura' ? '裏の攻撃' : gameState.currentPhase}</p>
-          <p>選択状態: プレイヤー1選択: {gameState.player1Selection !== null ? gameState.player1Selection + 1 : 'なし'}, プレイヤー2選択: {gameState.player2Selection !== null ? gameState.player2Selection + 1 : 'なし'}</p>
-          <p>確認状態: プレイヤー1確認: {gameState.player1Confirmed ? '済' : '未'}, プレイヤー2確認: {gameState.player2Confirmed ? '済' : '未'}</p>
-          <p>利用可能椅子数: {gameState.chairs.filter(chair => chair === null).length}</p>
-        </div>
+
       </div>
 
       <div className="chairs-container">
@@ -517,9 +504,9 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
             const myTurn = checkIsMyTurn();
             const canClick = isAvailable && myTurn;
             
-            // デバッグ: 最初の椅子の詳細情報をログ出力
+            // デバッグ: 最初のイスの詳細情報をログ出力
             if (chairNumber === 0) {
-              console.log('椅子0の詳細:', {
+              console.log('イス0の詳細:', {
                 chairNumber,
                 isAvailable,
                 myTurn,
@@ -538,7 +525,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
                 key={chairNumber}
                 className={`chair ${isAvailable ? 'available' : 'unavailable'} ${isSelected ? 'selected' : ''} ${isUsed ? 'used' : ''}`}
                 onClick={() => {
-                  console.log(`椅子${chairNumber}クリック試行:`, { canClick, isAvailable, myTurn });
+                  console.log(`イス${chairNumber}クリック試行:`, { canClick, isAvailable, myTurn });
                   if (canClick) {
                     handleChairClick(chairNumber);
                   }
@@ -547,7 +534,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
                   cursor: canClick ? 'pointer' : 'default',
                   opacity: canClick ? 1 : 0.6
                 }}
-                title={canClick ? `椅子${chairNumber}を選択` : isUsed ? '使用済みの椅子' : '選択できません'}
+                title={canClick ? `イス${chairNumber}を選択` : isUsed ? '使用済みのイス' : '選択できません'}
               >
                 {chairNumber + 1}
               </div>

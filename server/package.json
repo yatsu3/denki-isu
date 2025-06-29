@@ -1,7 +1,7 @@
 {
   "name": "denki-isu-server",
   "version": "1.0.0",
-  "description": "電気椅子ゲームのサーバーサイド",
+  "description": "電気イスゲームのサーバーサイド",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

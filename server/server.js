@@ -38,7 +38,7 @@ function initializeGameState() {
     player1Shocks: 0,
     player2Shocks: 0,
     chairs: Array(12).fill(null),
-    usedChairs: [], // 使用済みの椅子番号を管理
+    usedChairs: [], // 使用済みのイス番号を管理
     player1Selection: null,
     player2Selection: null,
     player1Confirmed: false,
@@ -133,21 +133,21 @@ function processResult(roomCode, gameState) {
       const points = gameState.player2Selection + 1;
       gameState.player2Score += points;
       result.pointGain = points;
-      // 使用済み椅子に追加
+      // 使用済みイスに追加
       if (!gameState.usedChairs.includes(gameState.player2Selection)) {
         gameState.usedChairs.push(gameState.player2Selection);
       }
-      console.log('プレイヤー2がポイント獲得（表の攻撃）:', points, '使用済み椅子:', gameState.usedChairs);
+      console.log('プレイヤー2がポイント獲得（表の攻撃）:', points, '使用済みイス:', gameState.usedChairs);
     } else {
       // 裏の攻撃フェーズ：プレイヤー1がポイント獲得
       const points = gameState.player1Selection + 1;
       gameState.player1Score += points;
       result.pointGain = points;
-      // 使用済み椅子に追加
+      // 使用済みイスに追加
       if (!gameState.usedChairs.includes(gameState.player1Selection)) {
         gameState.usedChairs.push(gameState.player1Selection);
       }
-      console.log('プレイヤー1がポイント獲得（裏の攻撃）:', points, '使用済み椅子:', gameState.usedChairs);
+      console.log('プレイヤー1がポイント獲得（裏の攻撃）:', points, '使用済みイス:', gameState.usedChairs);
     }
   }
 
@@ -291,9 +291,9 @@ io.on('connection', (socket) => {
     console.log(`プレイヤーが部屋に参加しました: ${roomCode}`);
   });
 
-  // 椅子選択（選択中の状態は管理しない）
+  // イス選択（選択中の状態は管理しない）
   socket.on('selectChair', ({ roomCode, chairNumber, playerType }) => {
-    console.log('椅子選択リクエスト受信:', { roomCode, chairNumber, playerType, socketId: socket.id });
+    console.log('イス選択リクエスト受信:', { roomCode, chairNumber, playerType, socketId: socket.id });
     
     const room = rooms.get(roomCode);
     if (!room || room.status !== 'playing') {
@@ -303,9 +303,9 @@ io.on('connection', (socket) => {
 
     const gameState = room.gameState;
 
-    // 使用済みの椅子は選択できない
+    // 使用済みのイスは選択できない
     if (gameState.usedChairs.includes(chairNumber)) {
-      console.log('使用済みの椅子のため選択不可:', chairNumber);
+      console.log('使用済みのイスのため選択不可:', chairNumber);
       return;
     }
 
@@ -318,7 +318,7 @@ io.on('connection', (socket) => {
       console.log('プレイヤー2が選択:', chairNumber);
     }
 
-    console.log('椅子選択完了:', { chairNumber, playerType });
+    console.log('イス選択完了:', { chairNumber, playerType });
 
     // 選択中の状態は相手に見せないため、状態更新は送信しない
   });
@@ -355,12 +355,12 @@ io.on('connection', (socket) => {
     // プレイヤーの確認状態を更新
     if (playerType === 'player1') {
       gameState.player1Confirmed = true;
-      // プレイヤー1の選択は相手に見せないため、椅子の状態は更新しない
-      console.log('プレイヤー1の確認状態を更新（椅子の状態は更新しない）');
+      // プレイヤー1の選択は相手に見せないため、イスの状態は更新しない
+      console.log('プレイヤー1の確認状態を更新（イスの状態は更新しない）');
     } else {
       gameState.player2Confirmed = true;
-      // プレイヤー2の選択は相手に見せないため、椅子の状態は更新しない
-      console.log('プレイヤー2の確認状態を更新（椅子の状態は更新しない）');
+      // プレイヤー2の選択は相手に見せないため、イスの状態は更新しない
+      console.log('プレイヤー2の確認状態を更新（イスの状態は更新しない）');
     }
 
     console.log('確認状態更新後:', {
@@ -375,7 +375,7 @@ io.on('connection', (socket) => {
     // プレイヤー1が確認したら、プレイヤー2のターンに移行
     if (playerType === 'player1' && gameState.player1Confirmed) {
       if (gameState.currentPhase === 'omote') {
-        // 表の攻撃フェーズ：プレイヤー1が電流を流す椅子を選択確定したらプレイヤー2のターンに移行
+        // 表の攻撃フェーズ：プレイヤー1が電流を流すイスを選択確定したらプレイヤー2のターンに移行
         console.log('=== プレイヤー1が確認完了（表の攻撃）、プレイヤー2のターンに移行 ===');
         gameState.currentTurn = 'player2';
         
@@ -389,7 +389,7 @@ io.on('connection', (socket) => {
           player2Confirmed: gameState.player2Confirmed
         });
       } else if (gameState.currentPhase === 'ura') {
-        // 裏の攻撃フェーズ：プレイヤー1が座る椅子を選択確定したら結果判定
+        // 裏の攻撃フェーズ：プレイヤー1が座るイスを選択確定したら結果判定
         console.log('=== プレイヤー1が確認完了（裏の攻撃）、結果判定開始 ===');
         processResult(roomCode, gameState);
       }
@@ -397,11 +397,11 @@ io.on('connection', (socket) => {
     // プレイヤー2が確認した場合の処理
     else if (playerType === 'player2' && gameState.player2Confirmed) {
       if (gameState.currentPhase === 'omote') {
-        // 表の攻撃フェーズ：プレイヤー2が座る椅子を選択確定したら結果判定
+        // 表の攻撃フェーズ：プレイヤー2が座るイスを選択確定したら結果判定
         console.log('=== プレイヤー2が確認完了（表の攻撃）、結果判定開始 ===');
         processResult(roomCode, gameState);
       } else if (gameState.currentPhase === 'ura') {
-        // 裏の攻撃フェーズ：プレイヤー2が電流を流す椅子を選択確定したらプレイヤー1のターンに移行
+        // 裏の攻撃フェーズ：プレイヤー2が電流を流すイスを選択確定したらプレイヤー1のターンに移行
         console.log('=== プレイヤー2が確認完了（裏の攻撃）、プレイヤー1のターンに移行 ===');
         gameState.currentTurn = 'player1';
         

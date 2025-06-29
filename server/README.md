@@ -1,6 +1,6 @@
-# 電気椅子ゲーム サーバー
+# 電気イスゲーム サーバー
 
-電気椅子ゲームのWebSocketサーバーサイドです。
+電気イスゲームのWebSocketサーバーサイドです。
 
 ## 機能
 
@@ -64,7 +64,7 @@ GET /rooms
 ```
 
 #### `selectChair`
-椅子を選択します。
+イスを選択します。
 ```javascript
 {
   roomCode: "ABC123DEF4",
@@ -138,11 +138,11 @@ GET /rooms
   player2Points: 0,            // プレイヤー2のポイント
   player1Shocks: 0,            // プレイヤー1が電流を食らった回数
   player2Shocks: 0,            // プレイヤー2が電流を食らった回数
-  availableChairs: [1,2,3...], // 利用可能な椅子の番号
-  player1SelectedChair: null,  // プレイヤー1が選択した椅子
-  player2SelectedChair: null,  // プレイヤー2が選択した椅子
-  player1ShockChair: null,     // プレイヤー1が電流を流す椅子
-  player2ShockChair: null,     // プレイヤー2が電流を流す椅子
+  availableChairs: [1,2,3...], // 利用可能なイスの番号
+  player1SelectedChair: null,  // プレイヤー1が選択したイス
+  player2SelectedChair: null,  // プレイヤー2が選択したイス
+  player1ShockChair: null,     // プレイヤー1が電流を流すイス
+  player2ShockChair: null,     // プレイヤー2が電流を流すイス
   gameOver: false,             // ゲーム終了フラグ
   winner: null,                // 勝者
   currentPlayer: "player1"     // 現在のプレイヤー
