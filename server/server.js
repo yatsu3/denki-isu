@@ -31,6 +31,16 @@ if (isProduction) {
   });
 }
 
+// ルートエンドポイント（ヘルスチェック用）
+app.get('/', (req, res) => {
+  res.json({
+    message: '電気椅子ゲームサーバー',
+    status: 'running',
+    timestamp: new Date().toISOString(),
+    environment: isProduction ? 'production' : 'development'
+  });
+});
+
 // ゲームルームの管理
 const rooms = new Map();
 
@@ -490,7 +500,18 @@ io.on('connection', (socket) => {
 
 // ヘルスチェック用エンドポイント
 app.get('/health', (req, res) => {
-  res.json({ status: 'OK', rooms: rooms.size });
+  const healthInfo = {
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    rooms: rooms.size,
+    environment: isProduction ? 'production' : 'development',
+    port: PORT,
+    version: '1.0.0'
+  };
+  
+  console.log('ヘルスチェック要求:', healthInfo);
+  res.json(healthInfo);
 });
 
 // 部屋一覧取得（デバッグ用）
@@ -504,6 +525,9 @@ app.get('/rooms', (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`サーバーがポート${PORT}で起動しました`);
-  console.log(`ヘルスチェック: http://localhost:${PORT}/health`);
+  console.log(`🚀 サーバーがポート${PORT}で起動しました`);
+  console.log(`🌐 ヘルスチェック: http://localhost:${PORT}/health`);
+  console.log(`📊 部屋一覧: http://localhost:${PORT}/rooms`);
+  console.log(`🔌 Socket.IO接続準備完了`);
+  console.log(`📦 本番環境: ${isProduction ? 'はい' : 'いいえ'}`);
 }); 
