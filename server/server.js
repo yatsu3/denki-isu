@@ -2,18 +2,34 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
+
+// 本番環境用の設定
+const isProduction = process.env.NODE_ENV === 'production';
+const PORT = process.env.PORT || 3001;
+
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: isProduction ? "*" : "http://localhost:3000",
     methods: ["GET", "POST"]
   }
 });
 
 app.use(cors());
 app.use(express.json());
+
+// 本番環境では静的ファイルを配信
+if (isProduction) {
+  app.use(express.static(path.join(__dirname, '../build')));
+  
+  // React Router用のフォールバック
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../build/index.html'));
+  });
+}
 
 // ゲームルームの管理
 const rooms = new Map();
@@ -486,8 +502,6 @@ app.get('/rooms', (req, res) => {
   }));
   res.json(roomList);
 });
-
-const PORT = process.env.PORT || 3001;
 
 server.listen(PORT, () => {
   console.log(`サーバーがポート${PORT}で起動しました`);
