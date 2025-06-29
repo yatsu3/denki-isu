@@ -5,7 +5,7 @@ nixPkgs = ["nodejs", "npm"]
 cmds = ["npm install"]
 
 [phases.build]
-cmds = ["echo 'Build completed successfully'"]
+cmds = ["echo 'Server build completed successfully'"]
 
 [start]
 cmd = "npm start" 
