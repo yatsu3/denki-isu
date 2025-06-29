@@ -21,15 +21,59 @@ const io = socketIo(server, {
 app.use(cors());
 app.use(express.json());
 
-// 本番環境では静的ファイルを配信
-if (isProduction) {
-  app.use(express.static(path.join(__dirname, '../build')));
+// 本番環境では静的ファイルを配信しない（APIサーバーのみ）
+// if (isProduction) {
+//   app.use(express.static(path.join(__dirname, '../build')));
+//   
+//   // React Router用のフォールバック
+//   app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, '../build/index.html'));
+//   });
+// }
+
+// ルートエンドポイント（ヘルスチェック用）
+app.get('/', (req, res) => {
+  const serverInfo = {
+    message: '電気椅子ゲームサーバー',
+    status: 'running',
+    timestamp: new Date().toISOString(),
+    environment: isProduction ? 'production' : 'development',
+    port: PORT,
+    uptime: process.uptime(),
+    pid: process.pid,
+    cwd: process.cwd(),
+    version: '1.0.0'
+  };
   
-  // React Router用のフォールバック
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../build/index.html'));
-  });
-}
+  console.log('ルートエンドポイントアクセス:', serverInfo);
+  res.json(serverInfo);
+});
+
+// ヘルスチェック用エンドポイント
+app.get('/health', (req, res) => {
+  const healthInfo = {
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    rooms: rooms.size,
+    environment: isProduction ? 'production' : 'development',
+    port: PORT,
+    version: '1.0.0'
+  };
+  
+  console.log('ヘルスチェック要求:', healthInfo);
+  res.json(healthInfo);
+});
+
+// 部屋一覧取得（デバッグ用）
+app.get('/rooms', (req, res) => {
+  const roomList = Array.from(rooms.entries()).map(([code, room]) => ({
+    code,
+    playerCount: room.players.length,
+    status: room.status
+  }));
+  res.json(roomList);
+});
 
 // エラーハンドリング
 app.use((err, req, res, next) => {
@@ -49,24 +93,6 @@ app.use((req, res) => {
     message: `Route ${req.method} ${req.url} not found`,
     timestamp: new Date().toISOString()
   });
-});
-
-// ルートエンドポイント（ヘルスチェック用）
-app.get('/', (req, res) => {
-  const serverInfo = {
-    message: '電気椅子ゲームサーバー',
-    status: 'running',
-    timestamp: new Date().toISOString(),
-    environment: isProduction ? 'production' : 'development',
-    port: PORT,
-    uptime: process.uptime(),
-    pid: process.pid,
-    cwd: process.cwd(),
-    version: '1.0.0'
-  };
-  
-  console.log('ルートエンドポイントアクセス:', serverInfo);
-  res.json(serverInfo);
 });
 
 // ゲームルームの管理
@@ -526,32 +552,6 @@ io.on('connection', (socket) => {
   });
 });
 
-// ヘルスチェック用エンドポイント
-app.get('/health', (req, res) => {
-  const healthInfo = {
-    status: 'OK',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    rooms: rooms.size,
-    environment: isProduction ? 'production' : 'development',
-    port: PORT,
-    version: '1.0.0'
-  };
-  
-  console.log('ヘルスチェック要求:', healthInfo);
-  res.json(healthInfo);
-});
-
-// 部屋一覧取得（デバッグ用）
-app.get('/rooms', (req, res) => {
-  const roomList = Array.from(rooms.entries()).map(([code, room]) => ({
-    code,
-    playerCount: room.players.length,
-    status: room.status
-  }));
-  res.json(roomList);
-});
-
 server.listen(PORT, () => {
   console.log(`🚀 サーバーがポート${PORT}で起動しました`);
   console.log(`🌐 ヘルスチェック: http://localhost:${PORT}/health`);
@@ -562,4 +562,23 @@ server.listen(PORT, () => {
   console.log(`📁 作業ディレクトリ: ${process.cwd()}`);
   console.log(`🌍 環境変数 PORT: ${process.env.PORT}`);
   console.log(`🌍 環境変数 NODE_ENV: ${process.env.NODE_ENV}`);
+  console.log(`🌍 環境変数 RAILWAY_STATIC_URL: ${process.env.RAILWAY_STATIC_URL}`);
+  console.log(`🌍 環境変数 RAILWAY_PUBLIC_DOMAIN: ${process.env.RAILWAY_PUBLIC_DOMAIN}`);
+  console.log(`✅ サーバー起動完了 - ヘルスチェック準備完了`);
+});
+
+// エラーハンドリング
+server.on('error', (error) => {
+  console.error('🚨 サーバーエラー:', error);
+  if (error.code === 'EADDRINUSE') {
+    console.error('ポートが既に使用されています');
+  }
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('🚨 未処理の例外:', error);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('🚨 未処理のPromise拒否:', reason);
 }); 
