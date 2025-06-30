@@ -28,6 +28,6 @@
     }
   ],
   "env": {
-    "REACT_APP_SOCKET_URL": "@socket-url"
+    "REACT_APP_SOCKET_URL": "https://electric-chair-game.com"
   }
 } 
