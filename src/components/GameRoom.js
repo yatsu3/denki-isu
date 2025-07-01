@@ -294,30 +294,6 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     }
   };
 
-  const getConfirmButtonText = () => {
-    if (gameState.currentPhase === 'omote') {
-      return gameState.currentTurn === 'player1' ? 'プレイヤー1選択終了' : 'プレイヤー2選択終了';
-    } else {
-      return gameState.currentTurn === 'player2' ? 'プレイヤー2選択終了' : 'プレイヤー1選択終了';
-    }
-  };
-
-  const canConfirm = () => {
-    if (gameState.currentPhase === 'omote') {
-      if (gameState.currentTurn === 'player1') {
-        return gameState.chairs[gameState.player1Selection] !== null;
-      } else {
-        return gameState.chairs[gameState.player2Selection] !== null;
-      }
-    } else {
-      if (gameState.currentTurn === 'player2') {
-        return gameState.chairs[gameState.player2Selection] !== null;
-      } else {
-        return gameState.chairs[gameState.player1Selection] !== null;
-      }
-    }
-  };
-
   const handleBackToTop = () => {
     socketService.disconnect();
     navigate('/');
