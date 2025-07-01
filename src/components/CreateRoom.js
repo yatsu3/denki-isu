@@ -17,6 +17,7 @@ function CreateRoom() {
       // 接続は切断しない（GameRoomでも使用するため）
       console.log('CreateRoomクリーンアップ');
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const initializeRoom = async () => {

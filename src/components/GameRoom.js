@@ -29,7 +29,6 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
   
   const [gameState, setGameState] = useState(initialGameState);
 
-  const [selectedChair, setSelectedChair] = useState(null);
   const [localSelectedChair, setLocalSelectedChair] = useState(null); // ローカル選択状態
   const [isMyTurnState, setIsMyTurnState] = useState(false);
   const [gameStarted, setGameStarted] = useState(initialGameStarted);
@@ -188,6 +187,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       console.log('GameRoomクリーンアップ');
       // 接続は切断しない（他のコンポーネントでも使用する可能性があるため）
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actualRoomCode, actualIsHost, initialGameStarted, initialGameState, propIsHost, location.state?.isHost]);
 
   const handleChairClick = (chairNumber) => {
@@ -274,14 +274,6 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     });
     
     return isMyTurn && isSelectionPhase && chairIsEmpty && !chairIsUsed;
-  };
-
-  const getChairStatus = (chairNumber) => {
-    const chair = gameState.chairs[chairNumber];
-    if (chair === null) return 'empty';
-    if (chair.player === 'player1') return 'player1';
-    if (chair.player === 'player2') return 'player2';
-    return 'empty';
   };
 
   const getCurrentPhaseText = () => {
