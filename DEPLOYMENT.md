@@ -102,7 +102,7 @@ Value: electric-chair.com
 ### 1. フロントエンド確認
 ```bash
 # ブラウザでアクセス
-https://electric-chair.com
+https://electric-chair-game.com
 ```
 
 ### 2. バックエンド確認
