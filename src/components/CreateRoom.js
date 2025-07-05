@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import socketService from '../services/socketService';
+import { sendRoomCreated, sendGameStarted } from '../services/analytics';
 
 function CreateRoom() {
   const navigate = useNavigate();
@@ -48,11 +49,18 @@ function CreateRoom() {
       const result = await socketService.createRoom();
       setRoomCode(result.roomCode);
       
+      // Google Analytics: 部屋作成イベント
+      sendRoomCreated(result.roomCode);
+      
       console.log('部屋作成完了、ゲーム開始イベントを待機中');
       
       // ゲーム開始を待機（gameStartedイベント）
       socketService.onGameStarted((data) => {
         console.log('CreateRoom: ゲーム開始イベントを受信:', data);
+        
+        // Google Analytics: ゲーム開始イベント
+        sendGameStarted(result.roomCode);
+        
         // 即座にGameRoomに遷移
         navigate(`/game/${result.roomCode}`, { 
           state: { 

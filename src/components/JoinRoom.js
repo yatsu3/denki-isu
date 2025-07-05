@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import socketService from '../services/socketService';
+import { sendRoomJoined, sendGameStarted } from '../services/analytics';
 
 function JoinRoom() {
   const navigate = useNavigate();
@@ -33,6 +34,12 @@ function JoinRoom() {
       // 部屋に参加（gameStartedイベントを待つ）
       const result = await socketService.joinRoom(roomCode.trim());
       console.log('部屋参加完了:', result);
+      
+      // Google Analytics: 部屋参加イベント
+      sendRoomJoined(roomCode.trim());
+      
+      // Google Analytics: ゲーム開始イベント
+      sendGameStarted(roomCode.trim());
       
       // ゲームページに遷移（isHost: falseで参加者として）
       navigate(`/game/${roomCode.trim()}`, { 
