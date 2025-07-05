@@ -3,7 +3,7 @@ import { io } from 'socket.io-client';
 // 本番環境用の設定
 const isProduction = process.env.NODE_ENV === 'production';
 const SOCKET_URL = isProduction 
-  ? window.location.origin 
+  ? process.env.REACT_APP_SOCKET_URL 
   : 'http://localhost:3001';
 
 class SocketService {
