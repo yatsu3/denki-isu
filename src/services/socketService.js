@@ -30,51 +30,57 @@ class SocketService {
   }
 
   connect() {
-    if (this.socket && this.isConnected) {
-      console.log('既に接続済みです');
-      return this.socket;
-    }
-
-    console.log('Socket.IO接続開始:', SOCKET_URL);
-    
-    this.socket = io(SOCKET_URL, {
-      transports: ['websocket', 'polling'],
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-      timeout: 20000
-    });
-    
-    this.socket.on('connect', () => {
-      console.log('サーバーに接続しました:', this.socket.id);
-      this.isConnected = true;
-    });
-
-    this.socket.on('disconnect', (reason) => {
-      console.log('サーバーから切断されました:', reason);
-      this.isConnected = false;
-    });
-
-    this.socket.on('connect_error', (error) => {
-      console.error('接続エラー:', error);
-      this.isConnected = false;
-    });
-
-    this.socket.on('reconnect', (attemptNumber) => {
-      console.log('再接続しました:', attemptNumber);
-      this.isConnected = true;
-    });
-
-    this.socket.on('reconnect_error', (error) => {
-      console.error('再接続エラー:', error);
-    });
-
-    // タイムアウト設定
-    setTimeout(() => {
-      if (!this.isConnected) {
-        console.error('接続タイムアウト');
+    return new Promise((resolve, reject) => {
+      if (this.socket && this.isConnected) {
+        console.log('既に接続済みです');
+        resolve(this.socket);
+        return;
       }
-    }, 20000);
+
+      console.log('Socket.IO接続開始:', SOCKET_URL);
+      
+      this.socket = io(SOCKET_URL, {
+        transports: ['websocket', 'polling'],
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
+        timeout: 20000
+      });
+      
+      this.socket.on('connect', () => {
+        console.log('サーバーに接続しました:', this.socket.id);
+        this.isConnected = true;
+        resolve(this.socket);
+      });
+
+      this.socket.on('disconnect', (reason) => {
+        console.log('サーバーから切断されました:', reason);
+        this.isConnected = false;
+      });
+
+      this.socket.on('connect_error', (error) => {
+        console.error('接続エラー:', error);
+        this.isConnected = false;
+        reject(error);
+      });
+
+      this.socket.on('reconnect', (attemptNumber) => {
+        console.log('再接続しました:', attemptNumber);
+        this.isConnected = true;
+      });
+
+      this.socket.on('reconnect_error', (error) => {
+        console.error('再接続エラー:', error);
+      });
+
+      // タイムアウト設定
+      setTimeout(() => {
+        if (!this.isConnected) {
+          console.error('接続タイムアウト');
+          reject(new Error('接続タイムアウト'));
+        }
+      }, 20000);
+    });
   }
 
   disconnect() {

@@ -23,13 +23,10 @@ function JoinRoom() {
       setIsJoining(true);
       setError('');
       
-      // 既存の接続があるかチェック
-      if (!socketService.isSocketConnected()) {
-        console.log('Socket.IO接続が存在しないため、新規接続を開始');
-        await socketService.connect();
-      } else {
-        console.log('既存のSocket.IO接続を使用');
-      }
+      // 接続処理（既存接続があっても新規接続を確実に行う）
+      console.log('Socket.IO接続を開始');
+      await socketService.connect();
+      console.log('Socket.IO接続完了');
       
       console.log('部屋参加処理開始');
       
