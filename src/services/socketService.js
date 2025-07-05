@@ -88,12 +88,25 @@ class SocketService {
 
   createRoom() {
     return new Promise((resolve, reject) => {
-      if (!this.socket || !this.isConnected) {
+      // より厳密な接続状態チェック
+      if (!this.socket) {
+        console.error('Socket.IO接続が存在しません');
         reject(new Error('Socket not connected'));
         return;
       }
 
-      console.log('部屋作成リクエスト送信');
+      if (!this.socket.connected) {
+        console.error('Socket.IO接続が切断されています');
+        reject(new Error('Socket not connected'));
+        return;
+      }
+
+      console.log('部屋作成リクエスト送信 - Socket状態:', {
+        socketId: this.socket.id,
+        connected: this.socket.connected,
+        isConnected: this.isConnected
+      });
+      
       this.socket.emit('createRoom');
       
       this.socket.once('roomCreated', (data) => {
@@ -113,8 +126,15 @@ class SocketService {
 
   joinRoom(roomCode) {
     return new Promise((resolve, reject) => {
-      if (!this.socket || !this.isConnected) {
+      // より厳密な接続状態チェック
+      if (!this.socket) {
         console.error('Socket.IO接続が存在しません');
+        reject(new Error('Socket not connected'));
+        return;
+      }
+
+      if (!this.socket.connected) {
+        console.error('Socket.IO接続が切断されています');
         reject(new Error('Socket not connected'));
         return;
       }
