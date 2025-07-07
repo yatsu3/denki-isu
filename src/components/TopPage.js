@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import AdBanner from './AdBanner';
 
 function TopPage() {
   const navigate = useNavigate();
@@ -38,6 +39,17 @@ function TopPage() {
           <li>8ラウンド終了時点でポイントが多い方が勝利</li>
           <li>また相手に3回電流を食らわせた方も勝利</li>
         </ul>
+      </div>
+      
+      {/* 広告バナー */}
+      <div style={{ marginTop: '40px' }}>
+        <AdBanner 
+          adSlot="1234567890" // あなたの広告ユニットID
+          style={{ 
+            textAlign: 'center',
+            margin: '20px 0'
+          }}
+        />
       </div>
     </div>
   );
