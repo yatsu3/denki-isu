@@ -206,14 +206,15 @@ class SocketService {
     console.log('Socket.IO emit完了');
   }
 
-  confirmSelection(playerType) {
+  confirmSelection(playerType, comment = '') {
     console.log('=== confirmSelection呼び出し開始 ===');
     console.log('確認状態:', {
       playerType,
       roomCode: this.roomCode,
       socket: this.socket,
       isConnected: this.isConnected,
-      socketId: this.socket?.id
+      socketId: this.socket?.id,
+      comment
     });
     
     if (!this.socket || !this.roomCode) {
@@ -223,7 +224,8 @@ class SocketService {
     
     const emitData = {
       roomCode: this.roomCode,
-      playerType
+      playerType,
+      comment
     };
     
     console.log('Socket.IO emit実行:', emitData);
@@ -320,6 +322,18 @@ class SocketService {
     this.socket.off('hideResult');
     this.socket.on('hideResult', (data) => {
       console.log('hideResultイベントを受信:', data);
+      callback(data);
+    });
+  }
+
+  onCommentReceived(callback) {
+    if (!this.socket) {
+      console.error('Socket.IO接続が存在しません');
+      return;
+    }
+    this.socket.off('commentReceived');
+    this.socket.on('commentReceived', (data) => {
+      console.log('commentReceivedイベントを受信:', data);
       callback(data);
     });
   }

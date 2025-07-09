@@ -35,6 +35,9 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
   const [connectionStatus, setConnectionStatus] = useState('connecting');
   const [showResult, setShowResult] = useState(false);
   const [resultData, setResultData] = useState(null);
+  const [comment, setComment] = useState(''); // 自分のコメント
+  const [opponentComment, setOpponentComment] = useState(''); // 相手のコメント
+  const [commentInputVisible, setCommentInputVisible] = useState(true); // コメント入力欄の表示制御
 
   const [playerName] = useState(actualIsHost ? 'プレイヤー1' : 'プレイヤー2');
   const [playerType] = useState(actualIsHost ? 'player1' : 'player2');
@@ -59,25 +62,35 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       console.log('受信した新しい状態:', newState);
       console.log('現在の状態:', gameState);
       
-      // 新しいラウンドが始まったらローカル選択状態をリセット
+      // 新しいラウンドが始まったらローカル選択状態とコメント関連をリセット
       if (newState.currentRound !== gameState.currentRound) {
-        console.log('新しいラウンド開始、ローカル選択状態をリセット');
+        console.log('新しいラウンド開始、ローカル選択状態とコメント関連をリセット');
         setLocalSelectedChair(null);
+        setComment(''); // 自分のコメントをリセット
+        setOpponentComment(''); // 相手のコメントをリセット
+        // コメント入力欄の表示状態は次のuseEffectで適切に設定される
+        console.log('ラウンド変更時のコメントリセット完了');
       }
       
-      // ターンが変わったらローカル選択状態をリセット
+      // ターンが変わったらローカル選択状態とコメントをリセット
       if (newState.currentTurn !== gameState.currentTurn) {
         console.log('=== ターン変更検出 ===');
         console.log('前のターン:', gameState.currentTurn);
         console.log('新しいターン:', newState.currentTurn);
-        console.log('ローカル選択状態をリセット');
+        console.log('ローカル選択状態とコメントをリセット');
         setLocalSelectedChair(null);
+        setComment(''); // 自分のコメントをリセット
+        setOpponentComment(''); // 相手のコメントをリセット
       }
       
-      // フェーズが変わったらローカル選択状態をリセット
+      // フェーズが変わったらローカル選択状態とコメント関連をリセット
       if (newState.currentPhase !== gameState.currentPhase) {
-        console.log('フェーズ変更、ローカル選択状態をリセット');
+        console.log('フェーズ変更、ローカル選択状態とコメント関連をリセット');
         setLocalSelectedChair(null);
+        setComment(''); // 自分のコメントをリセット
+        setOpponentComment(''); // 相手のコメントをリセット
+        // コメント入力欄の表示状態は次のuseEffectで適切に設定される
+        console.log('フェーズ変更時のコメントリセット完了');
       }
       
       // 結果表示状態をリセット
@@ -147,6 +160,12 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       setShowResult(false);
       setResultData(null);
     });
+
+    socketService.onCommentReceived((data) => {
+      if (data && data.comment) {
+        setOpponentComment(data.comment);
+      }
+    });
     
     console.log('イベントリスナー設定完了');
     
@@ -188,7 +207,33 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       // 接続は切断しない（他のコンポーネントでも使用する可能性があるため）
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actualRoomCode, actualIsHost, initialGameStarted, initialGameState, propIsHost, location.state?.isHost]);
+  }, [actualRoomCode, actualIsHost, initialGameStarted, initialGameState, propIsHost, location.state?.isHost, gameState.currentPhase, gameState.currentRound]);
+
+    // コメント入力フォームを表示する条件
+  const isCommentInputPhase =
+    (gameState.currentPhase === 'omote' && playerType === 'player1') ||
+    (gameState.currentPhase === 'ura' && playerType === 'player2');
+
+    // 攻撃側になったタイミングで入力欄を再表示（必ずトップレベルで呼ぶ）
+  useEffect(() => {
+    console.log('コメント入力欄表示条件チェック:', {
+      isCommentInputPhase,
+      currentPhase: gameState.currentPhase,
+      playerType,
+      commentInputVisible,
+      currentRound: gameState.currentRound
+    });
+    
+    if (isCommentInputPhase) {
+      console.log('コメント入力欄を表示します');
+      setCommentInputVisible(true);
+    } else {
+      console.log('コメント入力欄を非表示にします（攻撃側ではない）');
+      setCommentInputVisible(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCommentInputPhase, gameState.currentTurn, gameState.currentPhase, gameState.currentRound]);
+
 
   const handleChairClick = (chairNumber) => {
     console.log('handleChairClick呼び出し:', {
@@ -241,10 +286,13 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     const playerType = actualIsHost ? 'player1' : 'player2';
     console.log('選択確定処理開始:', { playerType, chairNumber: localSelectedChair });
     
-    socketService.confirmSelection(playerType);
+    socketService.confirmSelection(playerType, comment);
     
     // ローカル選択状態をリセット
     setLocalSelectedChair(null);
+    setComment(''); // コメントもリセット
+    // 選択確定後は入力欄を非表示（次のターンで再表示される）
+    setCommentInputVisible(false);
     console.log('ローカル選択状態をリセット');
     console.log('=== handleConfirmSelection呼び出し終了 ===');
   };
@@ -426,6 +474,8 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     );
   }
 
+
+
   return (
     <div className="game-container">
       <div className="game-header">
@@ -464,6 +514,36 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
         )}
 
       </div>
+
+      {/* コメント入力欄（攻撃側のみ、かつ未確定時のみ） */}
+      {isCommentInputPhase && commentInputVisible && (
+        <div className="comment-input-area" style={{ margin: '20px 0', textAlign: 'center' }}>
+          <input
+            type="text"
+            value={comment}
+            onChange={e => setComment(e.target.value)}
+            placeholder="コメントを入力..."
+            maxLength={100}
+            style={{ width: '80%', padding: '8px', fontSize: '1rem' }}
+          />
+        </div>
+      )}
+      {/* デバッグ: コメント表示条件 */}
+      {console.log('コメント表示条件デバッグ:', {
+        isCommentInputPhase,
+        commentInputVisible,
+        currentPhase: gameState.currentPhase,
+        playerType,
+        shouldShow: isCommentInputPhase && commentInputVisible
+      })}
+      {/* コメント入力できない側は相手コメントのみ表示 */}
+      {!isCommentInputPhase && opponentComment && (
+        <div className="comment-input-area" style={{ margin: '20px 0', textAlign: 'center' }}>
+          <div className="opponent-comment" style={{ fontWeight: 'bold', fontSize: '1.2rem', background: '#fffbe6', border: '2px solid #ff9800', borderRadius: '10px', padding: '12px', color: '#d35400', boxShadow: '0 2px 8px rgba(255,152,0,0.15)' }}>
+            相手のコメント: {opponentComment}
+          </div>
+        </div>
+      )}
 
       <div className="chairs-container">
         <div className="chairs-grid">

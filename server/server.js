@@ -404,9 +404,9 @@ io.on('connection', (socket) => {
   });
 
   // 選択確認
-  socket.on('confirmSelection', ({ roomCode, playerType }) => {
+  socket.on('confirmSelection', ({ roomCode, playerType, comment }) => {
     console.log('=== confirmSelectionイベント受信開始 ===');
-    console.log('受信データ:', { roomCode, playerType, socketId: socket.id });
+    console.log('受信データ:', { roomCode, playerType, comment, socketId: socket.id });
     
     const room = rooms.get(roomCode);
     console.log('部屋検索結果:', {
@@ -503,6 +503,16 @@ io.on('connection', (socket) => {
         
         // 即座送信した場合は、後で重複送信しないようにフラグを設定
         gameState._immediateUpdateSent = true;
+      }
+    }
+
+    // コメントを相手に送信
+    if (comment && typeof comment === 'string' && comment.trim() !== '') {
+      // 相手プレイヤーのsocketIdを特定
+      const opponentSocketId = room.players.find(id => id !== socket.id);
+      if (opponentSocketId) {
+        io.to(opponentSocketId).emit('commentReceived', { comment });
+        console.log('commentReceivedイベント送信:', { to: opponentSocketId, comment });
       }
     }
 
