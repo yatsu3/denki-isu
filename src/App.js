@@ -4,6 +4,7 @@ import TopPage from './components/TopPage';
 import CreateRoom from './components/CreateRoom';
 import JoinRoom from './components/JoinRoom';
 import GameRoom from './components/GameRoom';
+import ReleaseInfo from './components/ReleaseInfo';
 import { initGA, sendPageView } from './services/analytics';
 import './App.css';
 
@@ -33,6 +34,7 @@ function App() {
           <Route path="/create-room" element={<CreateRoom />} />
           <Route path="/join-room" element={<JoinRoom />} />
           <Route path="/game/:roomId" element={<GameRoom roomCode={null} isHost={false} />} />
+          <Route path="/release-info" element={<ReleaseInfo />} />
         </Routes>
       </div>
     </Router>

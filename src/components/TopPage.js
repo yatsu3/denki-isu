@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import AdBanner from './AdBanner';
 
 function TopPage() {
@@ -28,7 +28,7 @@ function TopPage() {
           部屋に入る
         </button>
       </div>
-      <div style={{ marginTop: '40px', padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '10px' }}>
+      <div className="game-rules">
         <h3 style={{ color: '#333', marginBottom: '15px' }}>ゲームルール</h3>
         <ul style={{ textAlign: 'left', color: '#666', lineHeight: '1.6' }}>
           <li>1から12までの数字が書かれた12脚のイスがあります</li>
@@ -39,6 +39,11 @@ function TopPage() {
           <li>8ラウンド終了時点でポイントが多い方が勝利</li>
           <li>また相手に3回電流を食らわせた方も勝利</li>
         </ul>
+        <div style={{ marginTop: '8px', textAlign: 'right' }}>
+          <Link to="/release-info" style={{ fontSize: '0.95rem', color: '#007bff', textDecoration: 'underline', background: 'rgba(255,255,255,0.8)', padding: '4px 10px', borderRadius: '8px' }}>
+            リリース情報
+          </Link>
+        </div>
       </div>
       
       {/* 広告バナー */}
