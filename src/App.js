@@ -5,6 +5,10 @@ import CreateRoom from './components/CreateRoom';
 import JoinRoom from './components/JoinRoom';
 import GameRoom from './components/GameRoom';
 import ReleaseInfo from './components/ReleaseInfo';
+import Header from './components/Header';
+import HowToPlay from './components/HowToPlay';
+import Terms from './components/Terms';
+import Contact from './components/Contact';
 import { initGA, sendPageView } from './services/analytics';
 import './App.css';
 
@@ -28,9 +32,13 @@ function App() {
   return (
     <Router>
       <div className="App">
+        <Header />
         <PageTracker />
         <Routes>
           <Route path="/" element={<TopPage />} />
+          <Route path="/how-to-play" element={<HowToPlay />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/create-room" element={<CreateRoom />} />
           <Route path="/join-room" element={<JoinRoom />} />
           <Route path="/game/:roomId" element={<GameRoom roomCode={null} isHost={false} />} />
