@@ -43,6 +43,37 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
   const [playerType] = useState(actualIsHost ? 'player1' : 'player2');
   const [opponentDisconnected, setOpponentDisconnected] = useState(false);
 
+  // BGM再生用の関数
+  const playShockSound = () => {
+    try {
+      const audio = new Audio('/sounds/shock.mp3'); // 電流音のファイルパス
+      audio.volume = 0.7;
+      audio.play().catch(e => console.log('電流音の再生に失敗:', e));
+    } catch (error) {
+      console.log('電流音の再生エラー:', error);
+    }
+  };
+
+  const playPointSound = () => {
+    try {
+      const audio = new Audio('/sounds/point.mp3'); // ポイント獲得音のファイルパス
+      audio.volume = 0.7;
+      audio.play().catch(e => console.log('ポイント音の再生に失敗:', e));
+    } catch (error) {
+      console.log('ポイント音の再生エラー:', error);
+    }
+  };
+
+  const playGameOverSound = () => {
+    try {
+      const audio = new Audio('/sounds/gameover.mp3'); // ゲーム終了音のファイルパス
+      audio.volume = 0.3; // 音量を0.3に下げる
+      audio.play().catch(e => console.log('ゲーム終了音の再生に失敗:', e));
+    } catch (error) {
+      console.log('ゲーム終了音の再生エラー:', error);
+    }
+  };
+
   useEffect(() => {
     console.log('GameRoom useEffect開始:', { 
       actualRoomCode, 
@@ -145,6 +176,9 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
         winner: result.winner,
         victoryReason: result.reason
       }));
+      
+      // ゲーム終了時にBGMを再生
+      playGameOverSound();
     });
 
     // 結果表示を監視
@@ -152,6 +186,13 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       console.log('GameRoom: 結果表示を受信:', result);
       setShowResult(true);
       setResultData(result);
+      
+      // 結果に応じてBGMを再生
+      if (result.isShock) {
+        playShockSound();
+      } else {
+        playPointSound();
+      }
     });
 
     // 結果表示終了を監視
