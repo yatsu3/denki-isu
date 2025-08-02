@@ -335,7 +335,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       console.log('コメント入力欄を非表示にします（攻撃側ではない）');
       setCommentInputVisible(false);
     }
-  }, [isCommentInputPhase, gameState.currentTurn, gameState.currentPhase, gameState.currentRound, getPlayerType, commentInputVisible]);
+  }, [isCommentInputPhase, gameState.currentTurn, gameState.currentPhase, gameState.currentRound, getPlayerType, commentInputVisible]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // opponentCommentの値が変更されたときのデバッグログ
   useEffect(() => {
