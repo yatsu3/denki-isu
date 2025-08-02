@@ -12,6 +12,38 @@
   margin-bottom: 30px;
 }
 
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.sound-toggle-btn {
+  background: none;
+  border: 2px solid #007bff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 123, 255, 0.1);
+}
+
+.sound-toggle-btn:hover {
+  background: rgba(0, 123, 255, 0.2);
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+.sound-toggle-btn:active {
+  transform: scale(0.95);
+}
+
 .game-info {
   display: flex;
   justify-content: space-around;
@@ -297,6 +329,17 @@
 @media (max-width: 768px) {
   .game-container {
     padding: 15px;
+  }
+  
+  .header-top {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .sound-toggle-btn {
+    width: 45px;
+    height: 45px;
+    font-size: 1.3rem;
   }
   
   .chairs-grid {

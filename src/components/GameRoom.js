@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import socketService from '../services/socketService';
 import './GameRoom.css';
@@ -38,6 +38,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
   const [comment, setComment] = useState(''); // 自分のコメント
   const [opponentComment, setOpponentComment] = useState(''); // 相手のコメント
   const [commentInputVisible, setCommentInputVisible] = useState(true); // コメント入力欄の表示制御
+  const [isSoundEnabled, setIsSoundEnabled] = useState(true); // 音量ON/OFF状態
 
   const [playerName] = useState(actualIsHost ? 'プレイヤー1' : 'プレイヤー2');
   const getPlayerType = () => (actualIsHost ? 'player1' : 'player2');
@@ -45,8 +46,13 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
 
   const prevIsCommentInputPhase = useRef(false);
 
-  // BGM再生用の関数
-  const playShockSound = () => {
+  // BGM再生用の関数（音量制御対応）
+  const playShockSound = useCallback(() => {
+    console.log('playShockSound呼び出し:', { isSoundEnabled });
+    if (!isSoundEnabled) {
+      console.log('音量OFFのため、電流音を再生しません');
+      return;
+    }
     try {
       const audio = new Audio('/sounds/shock.mp3'); // 電流音のファイルパス
       audio.volume = 0.7;
@@ -54,9 +60,14 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     } catch (error) {
       console.log('電流音の再生エラー:', error);
     }
-  };
+  }, [isSoundEnabled]);
 
-  const playPointSound = () => {
+  const playPointSound = useCallback(() => {
+    console.log('playPointSound呼び出し:', { isSoundEnabled });
+    if (!isSoundEnabled) {
+      console.log('音量OFFのため、ポイント音を再生しません');
+      return;
+    }
     try {
       const audio = new Audio('/sounds/point.mp3'); // ポイント獲得音のファイルパス
       audio.volume = 0.7;
@@ -64,9 +75,14 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     } catch (error) {
       console.log('ポイント音の再生エラー:', error);
     }
-  };
+  }, [isSoundEnabled]);
 
-  const playGameOverSound = () => {
+  const playGameOverSound = useCallback(() => {
+    console.log('playGameOverSound呼び出し:', { isSoundEnabled });
+    if (!isSoundEnabled) {
+      console.log('音量OFFのため、ゲーム終了音を再生しません');
+      return;
+    }
     try {
       const audio = new Audio('/sounds/gameover.mp3'); // ゲーム終了音のファイルパス
       audio.volume = 0.3; // 音量を0.3に下げる
@@ -74,6 +90,15 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     } catch (error) {
       console.log('ゲーム終了音の再生エラー:', error);
     }
+  }, [isSoundEnabled]);
+
+  // 音量制御ボタンのハンドラー
+  const toggleSound = () => {
+    setIsSoundEnabled(prev => {
+      const newValue = !prev;
+      console.log('音量設定変更:', { from: prev, to: newValue });
+      return newValue;
+    });
   };
 
   useEffect(() => {
@@ -199,8 +224,12 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
         victoryReason: result.reason
       }));
       
-      // ゲーム終了時にBGMを再生
-      playGameOverSound();
+      // ゲーム終了時にBGMを再生（音量チェック付き）
+      if (isSoundEnabled) {
+        playGameOverSound();
+      } else {
+        console.log('音量OFFのため、ゲーム終了音を再生しません');
+      }
     });
 
     // 結果表示を監視
@@ -209,11 +238,15 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       setShowResult(true);
       setResultData(result);
       
-      // 結果に応じてBGMを再生
-      if (result.isShock) {
-        playShockSound();
+      // 結果に応じてBGMを再生（音量チェック付き）
+      if (isSoundEnabled) {
+        if (result.isShock) {
+          playShockSound();
+        } else {
+          playPointSound();
+        }
       } else {
-        playPointSound();
+        console.log('音量OFFのため、結果音を再生しません');
       }
     });
 
@@ -278,8 +311,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       console.log('GameRoomクリーンアップ');
       // 接続は切断しない（他のコンポーネントでも使用する可能性があるため）
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actualRoomCode, actualIsHost, initialGameStarted, initialGameState, propIsHost, location.state?.isHost, gameState.currentPhase, gameState.currentRound]);
+  }, [actualRoomCode, actualIsHost, initialGameStarted, initialGameState, propIsHost, location.state?.isHost, gameState.currentPhase, gameState.currentRound, playShockSound, playPointSound, playGameOverSound, isSoundEnabled]);
 
     // コメント入力フォームを表示する条件
   const isCommentInputPhase =
@@ -556,7 +588,16 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
   return (
     <div className="game-container">
       <div className="game-header">
-        <h2>電気イスゲーム</h2>
+        <div className="header-top">
+          <h2>電気イスゲーム</h2>
+          <button 
+            className="sound-toggle-btn"
+            onClick={toggleSound}
+            title={isSoundEnabled ? '音量OFF' : '音量ON'}
+          >
+            {isSoundEnabled ? '🔊' : '🔇'}
+          </button>
+        </div>
         <p>部屋番号: {actualRoomCode}</p>
         <p>ラウンド: {gameState.currentRound}/8</p>
         <p>フェーズ: {gameState.currentPhase === 'omote' ? '表の攻撃' : gameState.currentPhase === 'ura' ? '裏の攻撃' : '選択中'}</p>
