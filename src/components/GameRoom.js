@@ -41,7 +41,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
   const [isSoundEnabled, setIsSoundEnabled] = useState(true); // 音量ON/OFF状態
 
   const [playerName] = useState(actualIsHost ? 'プレイヤー1' : 'プレイヤー2');
-  const getPlayerType = () => (actualIsHost ? 'player1' : 'player2');
+  const getPlayerType = useCallback(() => (actualIsHost ? 'player1' : 'player2'), [actualIsHost]);
   const [opponentDisconnected, setOpponentDisconnected] = useState(false);
 
   const prevIsCommentInputPhase = useRef(false);
@@ -311,7 +311,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       console.log('GameRoomクリーンアップ');
       // 接続は切断しない（他のコンポーネントでも使用する可能性があるため）
     };
-  }, [actualRoomCode, actualIsHost, initialGameStarted, initialGameState, propIsHost, location.state?.isHost, gameState.currentPhase, gameState.currentRound, playShockSound, playPointSound, playGameOverSound, isSoundEnabled]);
+  }, [actualRoomCode, actualIsHost, initialGameStarted, initialGameState, propIsHost, location.state?.isHost, gameState.currentPhase, gameState.currentRound, playShockSound, playPointSound, playGameOverSound, isSoundEnabled, getPlayerType]);
 
     // コメント入力フォームを表示する条件
   const isCommentInputPhase =
@@ -335,8 +335,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       console.log('コメント入力欄を非表示にします（攻撃側ではない）');
       setCommentInputVisible(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isCommentInputPhase, gameState.currentTurn, gameState.currentPhase, gameState.currentRound]);
+  }, [isCommentInputPhase, gameState.currentTurn, gameState.currentPhase, gameState.currentRound, getPlayerType, commentInputVisible]);
 
     // opponentCommentの値が変更されたときのデバッグログ
   useEffect(() => {
