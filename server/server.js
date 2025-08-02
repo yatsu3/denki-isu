@@ -452,17 +452,42 @@ io.on('connection', (socket) => {
       currentTurn: gameState.currentTurn
     });
 
+    // コメント送信処理を下記のように分岐
+    if (comment && typeof comment === 'string' && comment.trim() !== '') {
+      const opponentSocketId = room.players.find(id => id !== socket.id);
+      if (opponentSocketId) {
+        // 表の攻撃フェーズでプレイヤー1が確定した場合は、プレイヤー2のターン移行時に送信
+        if (playerType === 'player1' && gameState.currentPhase === 'omote') {
+          // コメントを一時保存
+          gameState._pendingComment = comment;
+        } else {
+          io.to(opponentSocketId).emit('commentReceived', { comment });
+          console.log('commentReceivedイベント送信:', { to: opponentSocketId, comment });
+        }
+      }
+    }
+
     // プレイヤー1が確認したら、プレイヤー2のターンに移行
     if (playerType === 'player1' && gameState.player1Confirmed) {
       if (gameState.currentPhase === 'omote') {
         // 表の攻撃フェーズ：プレイヤー1が電流を流すイスを選択確定したらプレイヤー2のターンに移行
-        console.log('=== プレイヤー1が確認完了（表の攻撃）、プレイヤー2のターンに移行 ===');
         gameState.currentTurn = 'player2';
-        
-        // 選択状態をリセット（プレイヤー2が選択できるように）
         gameState.player2Selection = null;
         gameState.player2Confirmed = false;
-        
+        // プレイヤー2のターン開始時に_pendingCommentがあれば送信
+        if (gameState._pendingComment) {
+          const opponentSocketId = room.players.find(id => id !== socket.id);
+          if (opponentSocketId) {
+            console.log('=== pending commentReceivedイベント送信開始 ===');
+            console.log('送信先:', opponentSocketId);
+            console.log('送信コメント:', gameState._pendingComment);
+            io.to(opponentSocketId).emit('commentReceived', { comment: gameState._pendingComment });
+            console.log('=== pending commentReceivedイベント送信完了 ===');
+            delete gameState._pendingComment;
+          } else {
+            console.log('相手プレイヤーのsocketIdが見つかりません');
+          }
+        }
         console.log('プレイヤー2のターン開始:', {
           currentTurn: gameState.currentTurn,
           player2Selection: gameState.player2Selection,
@@ -503,16 +528,6 @@ io.on('connection', (socket) => {
         
         // 即座送信した場合は、後で重複送信しないようにフラグを設定
         gameState._immediateUpdateSent = true;
-      }
-    }
-
-    // コメントを相手に送信
-    if (comment && typeof comment === 'string' && comment.trim() !== '') {
-      // 相手プレイヤーのsocketIdを特定
-      const opponentSocketId = room.players.find(id => id !== socket.id);
-      if (opponentSocketId) {
-        io.to(opponentSocketId).emit('commentReceived', { comment });
-        console.log('commentReceivedイベント送信:', { to: opponentSocketId, comment });
       }
     }
 

@@ -331,10 +331,15 @@ class SocketService {
       console.error('Socket.IO接続が存在しません');
       return;
     }
+    
+    console.log('onCommentReceivedリスナーを設定');
     this.socket.off('commentReceived');
     this.socket.on('commentReceived', (data) => {
-      console.log('commentReceivedイベントを受信:', data);
+      console.log('=== socketService: commentReceivedイベント受信開始 ===');
+      console.log('受信データ:', data);
+      console.log('コールバック関数:', callback);
       callback(data);
+      console.log('=== socketService: commentReceivedイベント受信終了 ===');
     });
   }
 

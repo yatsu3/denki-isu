@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import socketService from '../services/socketService';
 import './GameRoom.css';
@@ -40,8 +40,10 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
   const [commentInputVisible, setCommentInputVisible] = useState(true); // コメント入力欄の表示制御
 
   const [playerName] = useState(actualIsHost ? 'プレイヤー1' : 'プレイヤー2');
-  const [playerType] = useState(actualIsHost ? 'player1' : 'player2');
+  const getPlayerType = () => (actualIsHost ? 'player1' : 'player2');
   const [opponentDisconnected, setOpponentDisconnected] = useState(false);
+
+  const prevIsCommentInputPhase = useRef(false);
 
   // BGM再生用の関数
   const playShockSound = () => {
@@ -84,10 +86,25 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       locationStateIsHost: location.state?.isHost
     });
     
-    // 即座にイベントリスナーを設定（接続前に）
+    // イベントリスナーを設定開始
     console.log('イベントリスナーを設定開始');
     
-    // ゲーム状態の更新を監視
+    // コメント受信を監視（最初に設定）
+    socketService.onCommentReceived((data) => {
+      console.log('=== GameRoom: commentReceivedイベント受信開始 ===');
+      console.log('受信データ:', data);
+      console.log('現在のopponentComment:', opponentComment);
+      if (data && data.comment) {
+        console.log('opponentCommentを設定:', data.comment);
+        setOpponentComment(data.comment);
+        console.log('setOpponentComment呼び出し完了');
+      } else {
+        console.log('コメントデータが不正:', data);
+      }
+      console.log('=== GameRoom: commentReceivedイベント受信終了 ===');
+    });
+
+    // ゲーム状態更新を監視
     socketService.onGameStateUpdate((newState) => {
       console.log('=== GameRoom: gameStateUpdatedイベント受信開始 ===');
       console.log('受信した新しい状態:', newState);
@@ -95,12 +112,9 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       
       // 新しいラウンドが始まったらローカル選択状態とコメント関連をリセット
       if (newState.currentRound !== gameState.currentRound) {
-        console.log('新しいラウンド開始、ローカル選択状態とコメント関連をリセット');
         setLocalSelectedChair(null);
         setComment(''); // 自分のコメントをリセット
-        setOpponentComment(''); // 相手のコメントをリセット
-        // コメント入力欄の表示状態は次のuseEffectで適切に設定される
-        console.log('ラウンド変更時のコメントリセット完了');
+        // opponentCommentのリセットは攻撃側になった瞬間だけ
       }
       
       // ターンが変わったらローカル選択状態とコメントをリセット
@@ -111,7 +125,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
         console.log('ローカル選択状態とコメントをリセット');
         setLocalSelectedChair(null);
         setComment(''); // 自分のコメントをリセット
-        setOpponentComment(''); // 相手のコメントをリセット
+        // opponentCommentのリセットは攻撃側になった瞬間だけ
       }
       
       // フェーズが変わったらローカル選択状態とコメント関連をリセット
@@ -119,9 +133,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
         console.log('フェーズ変更、ローカル選択状態とコメント関連をリセット');
         setLocalSelectedChair(null);
         setComment(''); // 自分のコメントをリセット
-        setOpponentComment(''); // 相手のコメントをリセット
-        // コメント入力欄の表示状態は次のuseEffectで適切に設定される
-        console.log('フェーズ変更時のコメントリセット完了');
+        // opponentCommentのリセットは攻撃側になった瞬間だけ
       }
       
       // 結果表示状態をリセット
@@ -145,6 +157,16 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
         console.log('新しい状態:', isMyTurn ? '自分のターン' : '相手のターン');
       }
       
+      // 攻撃側になった瞬間だけopponentCommentをリセット
+      const nowIsCommentInputPhase =
+        (newState.currentPhase === 'omote' && getPlayerType() === 'player1') ||
+        (newState.currentPhase === 'ura' && getPlayerType() === 'player2');
+      if (!prevIsCommentInputPhase.current && nowIsCommentInputPhase) {
+        console.log('攻撃側になったため、opponentCommentをリセット');
+        setOpponentComment('');
+      }
+      prevIsCommentInputPhase.current = nowIsCommentInputPhase;
+
       console.log('状態更新完了:', {
         newPhase: newState.currentPhase,
         newTurn: newState.currentTurn,
@@ -202,10 +224,19 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       setResultData(null);
     });
 
+    // コメント受信を監視
     socketService.onCommentReceived((data) => {
+      console.log('=== GameRoom: commentReceivedイベント受信開始 ===');
+      console.log('受信データ:', data);
+      console.log('現在のopponentComment:', opponentComment);
       if (data && data.comment) {
+        console.log('opponentCommentを設定:', data.comment);
         setOpponentComment(data.comment);
+        console.log('setOpponentComment呼び出し完了');
+      } else {
+        console.log('コメントデータが不正:', data);
       }
+      console.log('=== GameRoom: commentReceivedイベント受信終了 ===');
     });
     
     console.log('イベントリスナー設定完了');
@@ -252,15 +283,15 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
 
     // コメント入力フォームを表示する条件
   const isCommentInputPhase =
-    (gameState.currentPhase === 'omote' && playerType === 'player1') ||
-    (gameState.currentPhase === 'ura' && playerType === 'player2');
+    (gameState.currentPhase === 'omote' && getPlayerType() === 'player1') ||
+    (gameState.currentPhase === 'ura' && getPlayerType() === 'player2');
 
     // 攻撃側になったタイミングで入力欄を再表示（必ずトップレベルで呼ぶ）
   useEffect(() => {
     console.log('コメント入力欄表示条件チェック:', {
       isCommentInputPhase,
       currentPhase: gameState.currentPhase,
-      playerType,
+      playerType: getPlayerType(),
       commentInputVisible,
       currentRound: gameState.currentRound
     });
@@ -274,6 +305,11 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCommentInputPhase, gameState.currentTurn, gameState.currentPhase, gameState.currentRound]);
+
+    // opponentCommentの値が変更されたときのデバッグログ
+  useEffect(() => {
+    console.log('opponentCommentが変更されました:', opponentComment);
+  }, [opponentComment]);
 
 
   const handleChairClick = (chairNumber) => {
@@ -394,7 +430,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     actualIsHost,
     propIsHost,
     locationStateIsHost: location.state?.isHost,
-    playerType,
+    playerType: getPlayerType(),
     playerName,
     gameStarted,
     connectionStatus,
@@ -572,13 +608,14 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       {/* デバッグ: コメント表示条件 */}
       {console.log('コメント表示条件デバッグ:', {
         isCommentInputPhase,
+        opponentComment,
         commentInputVisible,
         currentPhase: gameState.currentPhase,
-        playerType,
+        playerType: getPlayerType(),
         shouldShow: isCommentInputPhase && commentInputVisible
       })}
       {/* コメント入力できない側は相手コメントのみ表示 */}
-      {!isCommentInputPhase && opponentComment && (
+      {!isCommentInputPhase && !!opponentComment && (
         <div className="comment-input-area" style={{ margin: '20px 0', textAlign: 'center' }}>
           <div className="opponent-comment" style={{ fontWeight: 'bold', fontSize: '1.2rem', background: '#fffbe6', border: '2px solid #ff9800', borderRadius: '10px', padding: '12px', color: '#d35400', boxShadow: '0 2px 8px rgba(255,152,0,0.15)' }}>
             相手のコメント: {opponentComment}
