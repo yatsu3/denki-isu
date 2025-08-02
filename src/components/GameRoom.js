@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import socketService from '../services/socketService';
 import './GameRoom.css';
@@ -311,12 +311,13 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       console.log('GameRoomクリーンアップ');
       // 接続は切断しない（他のコンポーネントでも使用する可能性があるため）
     };
-  }, [actualRoomCode, actualIsHost, initialGameStarted, initialGameState, propIsHost, location.state?.isHost, gameState.currentPhase, gameState.currentRound, playShockSound, playPointSound, playGameOverSound, isSoundEnabled, getPlayerType]);
+  }, [actualRoomCode, actualIsHost, initialGameStarted, initialGameState, propIsHost, location.state?.isHost, gameState.currentPhase, gameState.currentRound, playShockSound, playPointSound, playGameOverSound, isSoundEnabled, getPlayerType]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // コメント入力フォームを表示する条件
-  const isCommentInputPhase =
-    (gameState.currentPhase === 'omote' && getPlayerType() === 'player1') ||
-    (gameState.currentPhase === 'ura' && getPlayerType() === 'player2');
+  const isCommentInputPhase = useMemo(() => {
+    return (gameState.currentPhase === 'omote' && getPlayerType() === 'player1') ||
+           (gameState.currentPhase === 'ura' && getPlayerType() === 'player2');
+  }, [gameState.currentPhase, getPlayerType]);
 
     // 攻撃側になったタイミングで入力欄を再表示（必ずトップレベルで呼ぶ）
   useEffect(() => {
@@ -335,7 +336,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       console.log('コメント入力欄を非表示にします（攻撃側ではない）');
       setCommentInputVisible(false);
     }
-  }, [isCommentInputPhase, gameState.currentTurn, gameState.currentPhase, gameState.currentRound, getPlayerType, commentInputVisible]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isCommentInputPhase, gameState.currentTurn, commentInputVisible]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // opponentCommentの値が変更されたときのデバッグログ
   useEffect(() => {
