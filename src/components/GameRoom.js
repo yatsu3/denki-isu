@@ -59,30 +59,64 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     try {
       console.log('音声ファイルの読み込みを開始');
       
-      // 音声オブジェクトを作成
-      audioRefs.current.shock = new Audio('/sounds/shock.mp3');
-      audioRefs.current.point = new Audio('/sounds/point.mp3');
-      audioRefs.current.gameOver = new Audio('/sounds/gameover.mp3');
+      // 音声オブジェクトを作成（絶対パスで指定）
+      const baseUrl = window.location.origin;
+      console.log('音声ファイルのベースURL:', baseUrl);
+      
+      audioRefs.current.shock = new Audio(`${baseUrl}/sounds/shock.mp3`);
+      audioRefs.current.point = new Audio(`${baseUrl}/sounds/point.mp3`);
+      audioRefs.current.gameOver = new Audio(`${baseUrl}/sounds/gameover.mp3`);
+      
+      console.log('音声ファイルのURL:', {
+        shock: audioRefs.current.shock.src,
+        point: audioRefs.current.point.src,
+        gameOver: audioRefs.current.gameOver.src
+      });
       
       // 音量を設定
       audioRefs.current.shock.volume = 0.7;
       audioRefs.current.point.volume = 0.7;
       audioRefs.current.gameOver.volume = 0.3;
       
-      // 音声ファイルの読み込みを待つ
+      // エラーハンドリングを追加
+      const handleError = (audio, name) => {
+        audio.addEventListener('error', (e) => {
+          console.error(`${name}音声ファイルの読み込みエラー:`, e);
+        });
+      };
+      
+      handleError(audioRefs.current.shock, 'shock');
+      handleError(audioRefs.current.point, 'point');
+      handleError(audioRefs.current.gameOver, 'gameOver');
+      
+      // 音声ファイルの読み込みを待つ（タイムアウト付き）
+      const loadWithTimeout = (audio, name, timeout = 10000) => {
+        return new Promise((resolve, reject) => {
+          const timer = setTimeout(() => {
+            console.warn(`${name}音声ファイルの読み込みがタイムアウトしました`);
+            resolve(); // タイムアウトでも続行
+          }, timeout);
+          
+          audio.addEventListener('canplaythrough', () => {
+            clearTimeout(timer);
+            console.log(`${name}音声ファイルの読み込み完了`);
+            resolve();
+          }, { once: true });
+          
+          audio.addEventListener('error', () => {
+            clearTimeout(timer);
+            console.warn(`${name}音声ファイルの読み込みに失敗しました`);
+            resolve(); // エラーでも続行
+          }, { once: true });
+          
+          audio.load();
+        });
+      };
+      
       await Promise.all([
-        new Promise((resolve) => {
-          audioRefs.current.shock.addEventListener('canplaythrough', resolve, { once: true });
-          audioRefs.current.shock.load();
-        }),
-        new Promise((resolve) => {
-          audioRefs.current.point.addEventListener('canplaythrough', resolve, { once: true });
-          audioRefs.current.point.load();
-        }),
-        new Promise((resolve) => {
-          audioRefs.current.gameOver.addEventListener('canplaythrough', resolve, { once: true });
-          audioRefs.current.gameOver.load();
-        })
+        loadWithTimeout(audioRefs.current.shock, 'shock'),
+        loadWithTimeout(audioRefs.current.point, 'point'),
+        loadWithTimeout(audioRefs.current.gameOver, 'gameOver')
       ]);
       
       console.log('音声ファイルの読み込みが完了');
