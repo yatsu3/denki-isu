@@ -39,6 +39,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
   const [opponentComment, setOpponentComment] = useState(''); // 相手のコメント
   const [commentInputVisible, setCommentInputVisible] = useState(true); // コメント入力欄の表示制御
   const [isSoundEnabled, setIsSoundEnabled] = useState(true); // 音量ON/OFF状態
+  const [audioLoaded, setAudioLoaded] = useState(false); // 音声ファイル読み込み状態
 
   const [playerName] = useState(actualIsHost ? 'プレイヤー1' : 'プレイヤー2');
   const getPlayerType = useCallback(() => (actualIsHost ? 'player1' : 'player2'), [actualIsHost]);
@@ -46,57 +47,133 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
 
   const prevIsCommentInputPhase = useRef(false);
 
+  // 音声オブジェクトを事前に作成
+  const audioRefs = useRef({
+    shock: null,
+    point: null,
+    gameOver: null
+  });
+
+  // 音声ファイルを事前に読み込む関数
+  const loadAudioFiles = useCallback(async () => {
+    try {
+      console.log('音声ファイルの読み込みを開始');
+      
+      // 音声オブジェクトを作成
+      audioRefs.current.shock = new Audio('/sounds/shock.mp3');
+      audioRefs.current.point = new Audio('/sounds/point.mp3');
+      audioRefs.current.gameOver = new Audio('/sounds/gameover.mp3');
+      
+      // 音量を設定
+      audioRefs.current.shock.volume = 0.7;
+      audioRefs.current.point.volume = 0.7;
+      audioRefs.current.gameOver.volume = 0.3;
+      
+      // 音声ファイルの読み込みを待つ
+      await Promise.all([
+        new Promise((resolve) => {
+          audioRefs.current.shock.addEventListener('canplaythrough', resolve, { once: true });
+          audioRefs.current.shock.load();
+        }),
+        new Promise((resolve) => {
+          audioRefs.current.point.addEventListener('canplaythrough', resolve, { once: true });
+          audioRefs.current.point.load();
+        }),
+        new Promise((resolve) => {
+          audioRefs.current.gameOver.addEventListener('canplaythrough', resolve, { once: true });
+          audioRefs.current.gameOver.load();
+        })
+      ]);
+      
+      console.log('音声ファイルの読み込みが完了');
+      setAudioLoaded(true);
+    } catch (error) {
+      console.error('音声ファイルの読み込みに失敗:', error);
+      setAudioLoaded(true); // エラーでも読み込み完了として扱う
+    }
+  }, []);
+
   // BGM再生用の関数（音量制御対応）
   const playShockSound = useCallback(() => {
-    console.log('playShockSound呼び出し:', { isSoundEnabled });
+    console.log('playShockSound呼び出し:', { isSoundEnabled, audioLoaded });
     if (!isSoundEnabled) {
       console.log('音量OFFのため、電流音を再生しません');
       return;
     }
+    if (!audioLoaded || !audioRefs.current.shock) {
+      console.log('音声ファイルが読み込まれていないため、電流音を再生しません');
+      return;
+    }
     try {
-      const audio = new Audio('/sounds/shock.mp3'); // 電流音のファイルパス
-      audio.volume = 0.7;
-      audio.play().catch(e => console.log('電流音の再生に失敗:', e));
+      // 音声を最初から再生
+      audioRefs.current.shock.currentTime = 0;
+      audioRefs.current.shock.play().catch(e => console.log('電流音の再生に失敗:', e));
     } catch (error) {
       console.log('電流音の再生エラー:', error);
     }
-  }, [isSoundEnabled]);
+  }, [isSoundEnabled, audioLoaded]);
 
   const playPointSound = useCallback(() => {
-    console.log('playPointSound呼び出し:', { isSoundEnabled });
+    console.log('playPointSound呼び出し:', { isSoundEnabled, audioLoaded });
     if (!isSoundEnabled) {
       console.log('音量OFFのため、ポイント音を再生しません');
       return;
     }
+    if (!audioLoaded || !audioRefs.current.point) {
+      console.log('音声ファイルが読み込まれていないため、ポイント音を再生しません');
+      return;
+    }
     try {
-      const audio = new Audio('/sounds/point.mp3'); // ポイント獲得音のファイルパス
-      audio.volume = 0.7;
-      audio.play().catch(e => console.log('ポイント音の再生に失敗:', e));
+      // 音声を最初から再生
+      audioRefs.current.point.currentTime = 0;
+      audioRefs.current.point.play().catch(e => console.log('ポイント音の再生に失敗:', e));
     } catch (error) {
       console.log('ポイント音の再生エラー:', error);
     }
-  }, [isSoundEnabled]);
+  }, [isSoundEnabled, audioLoaded]);
 
   const playGameOverSound = useCallback(() => {
-    console.log('playGameOverSound呼び出し:', { isSoundEnabled });
+    console.log('playGameOverSound呼び出し:', { isSoundEnabled, audioLoaded });
     if (!isSoundEnabled) {
       console.log('音量OFFのため、ゲーム終了音を再生しません');
       return;
     }
+    if (!audioLoaded || !audioRefs.current.gameOver) {
+      console.log('音声ファイルが読み込まれていないため、ゲーム終了音を再生しません');
+      return;
+    }
     try {
-      const audio = new Audio('/sounds/gameover.mp3'); // ゲーム終了音のファイルパス
-      audio.volume = 0.3; // 音量を0.3に下げる
-      audio.play().catch(e => console.log('ゲーム終了音の再生に失敗:', e));
+      // 音声を最初から再生
+      audioRefs.current.gameOver.currentTime = 0;
+      audioRefs.current.gameOver.play().catch(e => console.log('ゲーム終了音の再生に失敗:', e));
     } catch (error) {
       console.log('ゲーム終了音の再生エラー:', error);
     }
-  }, [isSoundEnabled]);
+  }, [isSoundEnabled, audioLoaded]);
 
   // 音量制御ボタンのハンドラー
   const toggleSound = () => {
     setIsSoundEnabled(prev => {
       const newValue = !prev;
       console.log('音量設定変更:', { from: prev, to: newValue });
+      
+      // 音量ONに変更した時、音声を有効にする
+      if (newValue && audioLoaded) {
+        // ユーザーインタラクション後に音声を有効にするため、短い音を再生
+        try {
+          if (audioRefs.current.shock) {
+            audioRefs.current.shock.currentTime = 0;
+            audioRefs.current.shock.volume = 0;
+            audioRefs.current.shock.play().then(() => {
+              audioRefs.current.shock.pause();
+              audioRefs.current.shock.volume = 0.7;
+            }).catch(e => console.log('音声有効化のための再生に失敗:', e));
+          }
+        } catch (error) {
+          console.log('音声有効化エラー:', error);
+        }
+      }
+      
       return newValue;
     });
   };
@@ -305,6 +382,9 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     };
 
     initializeGame();
+
+    // 音声ファイルの読み込みを開始
+    loadAudioFiles();
 
     // クリーンアップ
     return () => {
