@@ -13,11 +13,6 @@ function CreateRoom() {
   useEffect(() => {
     initializeRoom();
     
-    // クリーンアップ
-    return () => {
-      // 接続は切断しない（GameRoomでも使用するため）
-      console.log('CreateRoomクリーンアップ');
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -27,9 +22,9 @@ function CreateRoom() {
       setError('');
       
       // 接続処理（既存接続があっても新規接続を確実に行う）
-      console.log('Socket.IO接続を開始');
+      
       await socketService.connect();
-      console.log('Socket.IO接続完了');
+      
       
       // 接続完了後に部屋作成
       await createRoom();
@@ -52,11 +47,11 @@ function CreateRoom() {
       // Google Analytics: 部屋作成イベント
       sendRoomCreated(result.roomCode);
       
-      console.log('部屋作成完了、ゲーム開始イベントを待機中');
+      
       
       // ゲーム開始を待機（gameStartedイベント）
       socketService.onGameStarted((data) => {
-        console.log('CreateRoom: ゲーム開始イベントを受信:', data);
+        
         
         // Google Analytics: ゲーム開始イベント
         sendGameStarted(result.roomCode);

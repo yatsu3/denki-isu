@@ -25,15 +25,15 @@ function JoinRoom() {
       setError('');
       
       // 接続処理（既存接続があっても新規接続を確実に行う）
-      console.log('Socket.IO接続を開始');
-      await socketService.connect();
-      console.log('Socket.IO接続完了');
       
-      console.log('部屋参加処理開始');
+      await socketService.connect();
+      
+      
+      
       
       // 部屋に参加（gameStartedイベントを待つ）
       const result = await socketService.joinRoom(roomCode.trim());
-      console.log('部屋参加完了:', result);
+      
       
       // Google Analytics: 部屋参加イベント
       sendRoomJoined(roomCode.trim());

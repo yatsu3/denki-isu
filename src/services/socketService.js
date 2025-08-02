@@ -32,13 +32,13 @@ class SocketService {
   connect() {
     return new Promise((resolve, reject) => {
       if (this.socket && this.isConnected) {
-        console.log('既に接続済みです');
+        
         resolve(this.socket);
         return;
       }
 
-      console.log('Socket.IO接続開始:', SOCKET_URL);
       
+      // socket.ioの接続設定
       this.socket = io(SOCKET_URL, {
         transports: ['websocket', 'polling'],
         reconnection: true,
@@ -47,14 +47,16 @@ class SocketService {
         timeout: 20000
       });
       
+      // サーバーに接続後の設定
       this.socket.on('connect', () => {
-        console.log('サーバーに接続しました:', this.socket.id);
+        
         this.isConnected = true;
         resolve(this.socket);
       });
 
+      // サーバーから切断された場合の設定
       this.socket.on('disconnect', (reason) => {
-        console.log('サーバーから切断されました:', reason);
+        
         this.isConnected = false;
       });
 
@@ -64,8 +66,8 @@ class SocketService {
         reject(error);
       });
 
-      this.socket.on('reconnect', (attemptNumber) => {
-        console.log('再接続しました:', attemptNumber);
+      // サーバーに再接続した場合の設定
+      this.socket.on('reconnect', () => {
         this.isConnected = true;
       });
 
@@ -83,9 +85,9 @@ class SocketService {
     });
   }
 
+  // socketioの切断
   disconnect() {
     if (this.socket) {
-      console.log('Socket.IO接続を切断します');
       this.socket.disconnect();
       this.socket = null;
       this.isConnected = false;
@@ -106,20 +108,12 @@ class SocketService {
         reject(new Error('Socket not connected'));
         return;
       }
-
-      console.log('部屋作成リクエスト送信 - Socket状態:', {
-        socketId: this.socket.id,
-        connected: this.socket.connected,
-        isConnected: this.isConnected
-      });
       
       this.socket.emit('createRoom');
       
       this.socket.once('roomCreated', (data) => {
-        console.log('部屋作成成功:', data);
         this.roomCode = data.roomCode;
         this.isHost = true;
-        console.log('Socket.IOサービス: ホストに設定されました');
         resolve(data);
       });
 
@@ -144,13 +138,6 @@ class SocketService {
         reject(new Error('Socket not connected'));
         return;
       }
-
-      console.log('部屋参加リクエスト送信:', roomCode);
-      console.log('現在のSocket.IO状態:', {
-        socketId: this.socket.id,
-        connected: this.socket.connected,
-        isConnected: this.isConnected
-      });
       
       this.socket.emit('joinRoom', { roomCode });
       
@@ -161,11 +148,11 @@ class SocketService {
       }, 10000);
       
       this.socket.once('gameStarted', (data) => {
-        console.log('gameStartedイベントを受信:', data);
+        
         clearTimeout(timeout);
         this.roomCode = data.roomCode;
         this.isHost = false;
-        console.log('Socket.IOサービス: 参加者に設定されました');
+        
         resolve(data);
       });
 
@@ -178,45 +165,23 @@ class SocketService {
   }
 
   selectChair(chairNumber, playerType) {
-    console.log('selectChair呼び出し:', {
-      chairNumber,
-      playerType,
-      socket: this.socket,
-      roomCode: this.roomCode,
-      isConnected: this.isConnected
-    });
     
     if (!this.socket || !this.roomCode) {
       console.error('Socket.IOまたは部屋番号が無効');
       return;
     }
-    
-    console.log('Socket.IO emit実行:', {
-      roomCode: this.roomCode,
-      chairNumber,
-      playerType
-    });
-    
+        
     this.socket.emit('selectChair', {
       roomCode: this.roomCode,
       chairNumber,
       playerType
     });
     
-    console.log('Socket.IO emit完了');
+    
   }
 
   confirmSelection(playerType, comment = '') {
-    console.log('=== confirmSelection呼び出し開始 ===');
-    console.log('確認状態:', {
-      playerType,
-      roomCode: this.roomCode,
-      socket: this.socket,
-      isConnected: this.isConnected,
-      socketId: this.socket?.id,
-      comment
-    });
-    
+        
     if (!this.socket || !this.roomCode) {
       console.error('Socket.IOまたは部屋番号が無効');
       return;
@@ -228,12 +193,12 @@ class SocketService {
       comment
     };
     
-    console.log('Socket.IO emit実行:', emitData);
+    
     
     this.socket.emit('confirmSelection', emitData);
     
-    console.log('Socket.IO emit完了');
-    console.log('=== confirmSelection呼び出し終了 ===');
+    
+    
   }
 
   onGameStarted(callback) {
@@ -242,11 +207,11 @@ class SocketService {
       return;
     }
     
-    console.log('onGameStartedリスナーを設定');
+    
     // 既存のリスナーを削除
     this.socket.off('gameStarted');
     this.socket.on('gameStarted', (data) => {
-      console.log('gameStartedイベントを受信:', data);
+      
       callback(data);
     });
   }
@@ -257,11 +222,11 @@ class SocketService {
       return;
     }
     
-    console.log('onGameStateUpdateリスナーを設定');
+    
     // 既存のリスナーを削除
     this.socket.off('gameStateUpdated');
     this.socket.on('gameStateUpdated', (data) => {
-      console.log('gameStateUpdatedイベントを受信:', data);
+      
       callback(data);
     });
   }
@@ -272,11 +237,11 @@ class SocketService {
       return;
     }
     
-    console.log('onGameOverリスナーを設定');
+    
     // 既存のリスナーを削除
     this.socket.off('gameOver');
     this.socket.on('gameOver', (data) => {
-      console.log('gameOverイベントを受信:', data);
+      
       callback(data);
     });
   }
@@ -287,11 +252,11 @@ class SocketService {
       return;
     }
     
-    console.log('onPlayerDisconnectedリスナーを設定');
+    
     // 既存のリスナーを削除
     this.socket.off('playerDisconnected');
     this.socket.on('playerDisconnected', (data) => {
-      console.log('playerDisconnectedイベントを受信:', data);
+      
       callback(data);
     });
   }
@@ -302,11 +267,11 @@ class SocketService {
       return;
     }
     
-    console.log('onShowResultリスナーを設定');
+    
     // 既存のリスナーを削除
     this.socket.off('showResult');
     this.socket.on('showResult', (data) => {
-      console.log('showResultイベントを受信:', data);
+      
       callback(data);
     });
   }
@@ -317,11 +282,11 @@ class SocketService {
       return;
     }
     
-    console.log('onHideResultリスナーを設定');
+    
     // 既存のリスナーを削除
     this.socket.off('hideResult');
     this.socket.on('hideResult', (data) => {
-      console.log('hideResultイベントを受信:', data);
+      
       callback(data);
     });
   }
@@ -332,14 +297,14 @@ class SocketService {
       return;
     }
     
-    console.log('onCommentReceivedリスナーを設定');
+    
     this.socket.off('commentReceived');
     this.socket.on('commentReceived', (data) => {
-      console.log('=== socketService: commentReceivedイベント受信開始 ===');
-      console.log('受信データ:', data);
-      console.log('コールバック関数:', callback);
+      
+      
+      
       callback(data);
-      console.log('=== socketService: commentReceivedイベント受信終了 ===');
+      
     });
   }
 

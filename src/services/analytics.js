@@ -7,7 +7,7 @@ const GA_MEASUREMENT_ID = process.env.REACT_APP_GA_MEASUREMENT_ID || 'G-XXXXXXXX
 export const initGA = () => {
   if (GA_MEASUREMENT_ID && GA_MEASUREMENT_ID !== 'G-XXXXXXXXXX') {
     ReactGA.initialize(GA_MEASUREMENT_ID);
-    console.log('Google Analytics初期化完了:', GA_MEASUREMENT_ID);
+    
   } else {
     console.warn('Google Analytics測定IDが設定されていません');
   }
@@ -16,7 +16,7 @@ export const initGA = () => {
 // ページビュー送信
 export const sendPageView = (path) => {
   ReactGA.send({ hitType: "pageview", page: path });
-  console.log('ページビュー送信:', path);
+  
 };
 
 // カスタムイベント送信
@@ -27,7 +27,7 @@ export const sendEvent = (action, category, label, value) => {
     label: label,
     value: value
   });
-  console.log('イベント送信:', { action, category, label, value });
+  
 };
 
 // ゲーム関連のイベント送信
@@ -37,7 +37,7 @@ export const sendGameEvent = (action, details = {}) => {
     category: 'game',
     label: JSON.stringify(details)
   });
-  console.log('ゲームイベント送信:', action, details);
+  
 };
 
 // 部屋作成イベント

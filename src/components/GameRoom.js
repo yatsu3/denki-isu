@@ -57,22 +57,16 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
   // 音声ファイルを事前に読み込む関数
   const loadAudioFiles = useCallback(async () => {
     try {
-      console.log('音声ファイルの読み込みを開始');
+      
       
       // 音声オブジェクトを作成（絶対パスで指定）
       const baseUrl = window.location.origin;
-      console.log('音声ファイルのベースURL:', baseUrl);
+      
       
       audioRefs.current.shock = new Audio(`${baseUrl}/sounds/shock.mp3`);
       audioRefs.current.point = new Audio(`${baseUrl}/sounds/point.mp3`);
       audioRefs.current.gameOver = new Audio(`${baseUrl}/sounds/gameover.mp3`);
-      
-      console.log('音声ファイルのURL:', {
-        shock: audioRefs.current.shock.src,
-        point: audioRefs.current.point.src,
-        gameOver: audioRefs.current.gameOver.src
-      });
-      
+            
       // 音量を設定
       audioRefs.current.shock.volume = 0.7;
       audioRefs.current.point.volume = 0.7;
@@ -99,7 +93,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
           
           audio.addEventListener('canplaythrough', () => {
             clearTimeout(timer);
-            console.log(`${name}音声ファイルの読み込み完了`);
+            
             resolve();
           }, { once: true });
           
@@ -119,7 +113,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
         loadWithTimeout(audioRefs.current.gameOver, 'gameOver')
       ]);
       
-      console.log('音声ファイルの読み込みが完了');
+      
       setAudioLoaded(true);
     } catch (error) {
       console.error('音声ファイルの読み込みに失敗:', error);
@@ -129,59 +123,58 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
 
   // BGM再生用の関数（音量制御対応）
   const playShockSound = useCallback(() => {
-    console.log('playShockSound呼び出し:', { isSoundEnabled, audioLoaded });
+    // 音量OFFの場合は再生しない
     if (!isSoundEnabled) {
-      console.log('音量OFFのため、電流音を再生しません');
       return;
     }
     if (!audioLoaded || !audioRefs.current.shock) {
-      console.log('音声ファイルが読み込まれていないため、電流音を再生しません');
+      
       return;
     }
     try {
       // 音声を最初から再生
       audioRefs.current.shock.currentTime = 0;
-      audioRefs.current.shock.play().catch(e => console.log('電流音の再生に失敗:', e));
+      audioRefs.current.shock.play().catch(e => console.error('電流音の再生に失敗:', e));
     } catch (error) {
-      console.log('電流音の再生エラー:', error);
+      console.error('電流音の再生エラー:', error);
     }
   }, [isSoundEnabled, audioLoaded]);
 
   const playPointSound = useCallback(() => {
-    console.log('playPointSound呼び出し:', { isSoundEnabled, audioLoaded });
+    
+    // 音量OFFの場合は再生しない
     if (!isSoundEnabled) {
-      console.log('音量OFFのため、ポイント音を再生しません');
       return;
     }
     if (!audioLoaded || !audioRefs.current.point) {
-      console.log('音声ファイルが読み込まれていないため、ポイント音を再生しません');
+      
       return;
     }
     try {
       // 音声を最初から再生
       audioRefs.current.point.currentTime = 0;
-      audioRefs.current.point.play().catch(e => console.log('ポイント音の再生に失敗:', e));
+      audioRefs.current.point.play().catch(e => console.error('ポイント音の再生に失敗:', e));
     } catch (error) {
-      console.log('ポイント音の再生エラー:', error);
+      console.error('ポイント音の再生エラー:', error);
     }
   }, [isSoundEnabled, audioLoaded]);
 
   const playGameOverSound = useCallback(() => {
-    console.log('playGameOverSound呼び出し:', { isSoundEnabled, audioLoaded });
+    
+    // 音量OFFの場合は再生しない 
     if (!isSoundEnabled) {
-      console.log('音量OFFのため、ゲーム終了音を再生しません');
       return;
     }
     if (!audioLoaded || !audioRefs.current.gameOver) {
-      console.log('音声ファイルが読み込まれていないため、ゲーム終了音を再生しません');
+      
       return;
     }
     try {
       // 音声を最初から再生
       audioRefs.current.gameOver.currentTime = 0;
-      audioRefs.current.gameOver.play().catch(e => console.log('ゲーム終了音の再生に失敗:', e));
+      audioRefs.current.gameOver.play().catch(e => console.error('ゲーム終了音の再生に失敗:', e));
     } catch (error) {
-      console.log('ゲーム終了音の再生エラー:', error);
+      console.error('ゲーム終了音の再生エラー:', error);
     }
   }, [isSoundEnabled, audioLoaded]);
 
@@ -189,7 +182,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
   const toggleSound = () => {
     setIsSoundEnabled(prev => {
       const newValue = !prev;
-      console.log('音量設定変更:', { from: prev, to: newValue });
+      
       
       // 音量ONに変更した時、音声を有効にする
       if (newValue && audioLoaded) {
@@ -201,10 +194,10 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
             audioRefs.current.shock.play().then(() => {
               audioRefs.current.shock.pause();
               audioRefs.current.shock.volume = 0.7;
-            }).catch(e => console.log('音声有効化のための再生に失敗:', e));
+            }).catch(e => console.error('音声有効化のための再生に失敗:', e));
           }
         } catch (error) {
-          console.log('音声有効化エラー:', error);
+          console.error('音声有効化エラー:', error);
         }
       }
       
@@ -213,38 +206,25 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
   };
 
   useEffect(() => {
-    console.log('GameRoom useEffect開始:', { 
-      actualRoomCode, 
-      actualIsHost,
-      initialGameStarted,
-      initialGameState: initialGameState.currentPhase,
-      propIsHost,
-      locationStateIsHost: location.state?.isHost
-    });
-    
-    // イベントリスナーを設定開始
-    console.log('イベントリスナーを設定開始');
     
     // コメント受信を監視（最初に設定）
     socketService.onCommentReceived((data) => {
-      console.log('=== GameRoom: commentReceivedイベント受信開始 ===');
-      console.log('受信データ:', data);
-      console.log('現在のopponentComment:', opponentComment);
+      
+      
+      
       if (data && data.comment) {
-        console.log('opponentCommentを設定:', data.comment);
+        
         setOpponentComment(data.comment);
-        console.log('setOpponentComment呼び出し完了');
-      } else {
-        console.log('コメントデータが不正:', data);
+        
       }
-      console.log('=== GameRoom: commentReceivedイベント受信終了 ===');
+      
     });
 
     // ゲーム状態更新を監視
     socketService.onGameStateUpdate((newState) => {
-      console.log('=== GameRoom: gameStateUpdatedイベント受信開始 ===');
-      console.log('受信した新しい状態:', newState);
-      console.log('現在の状態:', gameState);
+      
+      
+      
       
       // 新しいラウンドが始まったらローカル選択状態とコメント関連をリセット
       if (newState.currentRound !== gameState.currentRound) {
@@ -255,10 +235,10 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       
       // ターンが変わったらローカル選択状態とコメントをリセット
       if (newState.currentTurn !== gameState.currentTurn) {
-        console.log('=== ターン変更検出 ===');
-        console.log('前のターン:', gameState.currentTurn);
-        console.log('新しいターン:', newState.currentTurn);
-        console.log('ローカル選択状態とコメントをリセット');
+        
+        
+        
+        
         setLocalSelectedChair(null);
         setComment(''); // 自分のコメントをリセット
         // opponentCommentのリセットは攻撃側になった瞬間だけ
@@ -266,7 +246,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       
       // フェーズが変わったらローカル選択状態とコメント関連をリセット
       if (newState.currentPhase !== gameState.currentPhase) {
-        console.log('フェーズ変更、ローカル選択状態とコメント関連をリセット');
+        
         setLocalSelectedChair(null);
         setComment(''); // 自分のコメントをリセット
         // opponentCommentのリセットは攻撃側になった瞬間だけ
@@ -274,7 +254,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       
       // 結果表示状態をリセット
       if (newState.currentPhase !== 'result') {
-        console.log('結果表示状態をリセット');
+        
         setShowResult(false);
         setResultData(null);
       }
@@ -288,9 +268,9 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       setIsMyTurnState(isMyTurn);
       
       if (wasMyTurn !== isMyTurn) {
-        console.log('=== 自分のターン状態変更 ===');
-        console.log('前の状態:', wasMyTurn ? '自分のターン' : '相手のターン');
-        console.log('新しい状態:', isMyTurn ? '自分のターン' : '相手のターン');
+        
+        
+        
       }
       
       // 攻撃側になった瞬間だけopponentCommentをリセット
@@ -298,36 +278,29 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
         (newState.currentPhase === 'omote' && getPlayerType() === 'player1') ||
         (newState.currentPhase === 'ura' && getPlayerType() === 'player2');
       if (!prevIsCommentInputPhase.current && nowIsCommentInputPhase) {
-        console.log('攻撃側になったため、opponentCommentをリセット');
+        
         setOpponentComment('');
       }
       prevIsCommentInputPhase.current = nowIsCommentInputPhase;
-
-      console.log('状態更新完了:', {
-        newPhase: newState.currentPhase,
-        newTurn: newState.currentTurn,
-        newRound: newState.currentRound,
-        isMyTurn: newState.currentTurn === myPlayerType
-      });
-      console.log('=== GameRoom: gameStateUpdatedイベント受信終了 ===');
+      
     });
 
     // ゲーム開始を監視
     socketService.onGameStarted((data) => {
-      console.log('GameRoom: ゲーム開始イベントを受信:', data);
+      
       setGameStarted(true);
       setGameState(data.gameState);
     });
 
     // プレイヤー切断を監視
     socketService.onPlayerDisconnected(() => {
-      console.log('GameRoom: プレイヤー切断を受信');
+      
       setOpponentDisconnected(true);
     });
 
     // ゲーム終了を監視
     socketService.onGameOver((result) => {
-      console.log('GameRoom: ゲーム終了を受信:', result);
+      
       setGameState(prev => ({
         ...prev,
         gameOver: true,
@@ -338,14 +311,12 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       // ゲーム終了時にBGMを再生（音量チェック付き）
       if (isSoundEnabled) {
         playGameOverSound();
-      } else {
-        console.log('音量OFFのため、ゲーム終了音を再生しません');
       }
     });
 
     // 結果表示を監視
     socketService.onShowResult((result) => {
-      console.log('GameRoom: 結果表示を受信:', result);
+      
       setShowResult(true);
       setResultData(result);
       
@@ -356,58 +327,41 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
         } else {
           playPointSound();
         }
-      } else {
-        console.log('音量OFFのため、結果音を再生しません');
       }
     });
 
     // 結果表示終了を監視
     socketService.onHideResult(() => {
-      console.log('GameRoom: 結果表示終了を受信');
+      
       setShowResult(false);
       setResultData(null);
     });
 
     // コメント受信を監視
     socketService.onCommentReceived((data) => {
-      console.log('=== GameRoom: commentReceivedイベント受信開始 ===');
-      console.log('受信データ:', data);
-      console.log('現在のopponentComment:', opponentComment);
+      
+      
+      
       if (data && data.comment) {
-        console.log('opponentCommentを設定:', data.comment);
+        
         setOpponentComment(data.comment);
-        console.log('setOpponentComment呼び出し完了');
-      } else {
-        console.log('コメントデータが不正:', data);
+        
       }
-      console.log('=== GameRoom: commentReceivedイベント受信終了 ===');
     });
     
-    console.log('イベントリスナー設定完了');
+    
     
     const initializeGame = async () => {
       try {
         // 既存の接続があるかチェック
         if (!socketService.isSocketConnected()) {
-          console.log('Socket.IO接続が存在しないため、新規接続を開始');
+          // Socket.IO接続が存在しないため、新規接続を開始
           await socketService.connect();
-        } else {
-          console.log('既存のSocket.IO接続を使用');
         }
         
         setConnectionStatus('connected');
-        console.log('Socket.IO接続完了');
         
-        // 接続状態を詳細にログ出力
-        console.log('接続状態詳細:', {
-          socketId: socketService.socket?.id,
-          connected: socketService.socket?.connected,
-          isConnected: socketService.isSocketConnected(),
-          roomCode: socketService.getRoomCode(),
-          isHost: socketService.getIsHost()
-        });
-
-        console.log('GameRoom初期化完了');
+        
       } catch (error) {
         console.error('GameRoom初期化エラー:', error);
         setConnectionStatus('error');
@@ -420,11 +374,6 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     // 音声ファイルの読み込みを開始
     loadAudioFiles();
 
-    // クリーンアップ
-    return () => {
-      console.log('GameRoomクリーンアップ');
-      // 接続は切断しない（他のコンポーネントでも使用する可能性があるため）
-    };
   }, [actualRoomCode, actualIsHost, initialGameStarted, initialGameState, propIsHost, location.state?.isHost, gameState.currentPhase, gameState.currentRound, playShockSound, playPointSound, playGameOverSound, isSoundEnabled, getPlayerType]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // コメント入力フォームを表示する条件
@@ -434,80 +383,59 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
   }, [gameState.currentPhase, getPlayerType]);
 
     // 攻撃側になったタイミングで入力欄を再表示（必ずトップレベルで呼ぶ）
-  useEffect(() => {
-    console.log('コメント入力欄表示条件チェック:', {
-      isCommentInputPhase,
-      currentPhase: gameState.currentPhase,
-      playerType: getPlayerType(),
-      commentInputVisible,
-      currentRound: gameState.currentRound
-    });
-    
+  useEffect(() => {    
     if (isCommentInputPhase) {
-      console.log('コメント入力欄を表示します');
+      
       setCommentInputVisible(true);
     } else {
-      console.log('コメント入力欄を非表示にします（攻撃側ではない）');
+      
       setCommentInputVisible(false);
     }
   }, [isCommentInputPhase, gameState.currentTurn, commentInputVisible]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // opponentCommentの値が変更されたときのデバッグログ
   useEffect(() => {
-    console.log('opponentCommentが変更されました:', opponentComment);
+    
   }, [opponentComment]);
 
 
   const handleChairClick = (chairNumber) => {
-    console.log('handleChairClick呼び出し:', {
-      chairNumber,
-      isMyTurnState,
-      gameState: gameState.currentPhase,
-      localSelectedChair
-    });
 
     const myPlayerType = actualIsHost ? 'player1' : 'player2';
     const isMyTurn = gameState.currentTurn === myPlayerType;
     const isSelectionPhase = gameState.currentPhase === 'omote' || gameState.currentPhase === 'ura';
 
     if (!isMyTurn || !isSelectionPhase) {
-      console.log('選択不可:', { isMyTurn, phase: gameState.currentPhase });
+      
       return;
     }
 
     // 既に選択済みの場合は選択解除
     if (localSelectedChair === chairNumber) {
-      console.log('選択解除:', chairNumber);
+      
       setLocalSelectedChair(null);
       socketService.selectChair(null, myPlayerType); // サーバーに選択解除を通知
       return;
     }
 
     // 新しい選択（1つのイスのみ選択可能）
-    console.log('イス選択処理開始:', chairNumber);
+    
     setLocalSelectedChair(chairNumber);
     
-    console.log('Socket.IO selectChair呼び出し前');
+    
     socketService.selectChair(chairNumber, myPlayerType);
-    console.log('Socket.IO selectChair呼び出し後');
+    
   };
 
   const handleConfirmSelection = () => {
-    console.log('=== handleConfirmSelection呼び出し開始 ===');
-    console.log('現在の状態:', {
-      localSelectedChair,
-      currentPhase: gameState.currentPhase,
-      currentTurn: gameState.currentTurn,
-      playerType: actualIsHost ? 'player1' : 'player2'
-    });
-    
+        
     if (localSelectedChair === null) {
-      console.log('選択されたイスがないため、処理を中止');
+      
       return;
     }
     
     const playerType = actualIsHost ? 'player1' : 'player2';
-    console.log('選択確定処理開始:', { playerType, chairNumber: localSelectedChair });
+    
     
     socketService.confirmSelection(playerType, comment);
     
@@ -516,8 +444,8 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     setComment(''); // コメントもリセット
     // 選択確定後は入力欄を非表示（次のターンで再表示される）
     setCommentInputVisible(false);
-    console.log('ローカル選択状態をリセット');
-    console.log('=== handleConfirmSelection呼び出し終了 ===');
+    
+    
   };
 
   const checkIsMyTurn = () => {
@@ -531,19 +459,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     const isSelectionPhase = gameState.currentPhase === 'omote' || gameState.currentPhase === 'ura';
     const chairIsEmpty = gameState.chairs[chairNumber] === null;
     const chairIsUsed = gameState.usedChairs && gameState.usedChairs.includes(chairNumber);
-    
-    console.log('イス選択条件チェック:', {
-      chairNumber,
-      myPlayerType,
-      currentTurn: gameState.currentTurn,
-      isMyTurn,
-      currentPhase: gameState.currentPhase,
-      isSelectionPhase,
-      chairIsEmpty,
-      chairIsUsed,
-      canSelect: isMyTurn && isSelectionPhase && chairIsEmpty && !chairIsUsed
-    });
-    
+        
     return isMyTurn && isSelectionPhase && chairIsEmpty && !chairIsUsed;
   };
 
@@ -569,35 +485,6 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     socketService.disconnect();
     navigate('/');
   };
-
-  // デバッグ情報を表示
-  console.log('GameRoom デバッグ情報:', {
-    actualRoomCode,
-    actualIsHost,
-    propIsHost,
-    locationStateIsHost: location.state?.isHost,
-    playerType: getPlayerType(),
-    playerName,
-    gameStarted,
-    connectionStatus,
-    locationState: location.state,
-    socketServiceIsHost: socketService.getIsHost(),
-    gameState: {
-      currentPhase: gameState.currentPhase,
-      currentTurn: gameState.currentTurn,
-      chairs: gameState.chairs,
-      player1Selection: gameState.player1Selection,
-      player2Selection: gameState.player2Selection
-    },
-    isMyTurn: checkIsMyTurn(),
-    canSelectChair0: canSelectChair(0),
-    // ホスト/参加者判定の詳細
-    hostDetermination: {
-      locationStateDefined: location.state?.isHost !== undefined,
-      propIsHostDefined: propIsHost !== undefined,
-      finalResult: actualIsHost
-    }
-  });
 
   if (connectionStatus === 'connecting') {
     return <div className="game-room">接続中...</div>;
@@ -760,16 +647,6 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
           />
         </div>
       )}
-      {/* デバッグ: コメント表示条件 */}
-      {console.log('コメント表示条件デバッグ:', {
-        isCommentInputPhase,
-        opponentComment,
-        commentInputVisible,
-        currentPhase: gameState.currentPhase,
-        playerType: getPlayerType(),
-        shouldShow: isCommentInputPhase && commentInputVisible
-      })}
-      {/* コメント入力できない側は相手コメントのみ表示 */}
       {!isCommentInputPhase && !!opponentComment && (
         <div className="comment-input-area" style={{ margin: '20px 0', textAlign: 'center' }}>
           <div className="opponent-comment" style={{ fontWeight: 'bold', fontSize: '1.2rem', background: '#fffbe6', border: '2px solid #ff9800', borderRadius: '10px', padding: '12px', color: '#d35400', boxShadow: '0 2px 8px rgba(255,152,0,0.15)' }}>
@@ -784,18 +661,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
             const isAvailable = canSelectChair(chairNumber);
             const myTurn = checkIsMyTurn();
             const canClick = isAvailable && myTurn;
-            
-            // デバッグ: 最初のイスの詳細情報をログ出力
-            if (chairNumber === 0) {
-              console.log('イス0の詳細:', {
-                chairNumber,
-                isAvailable,
-                myTurn,
-                canClick,
-                chairs: gameState.chairs
-              });
-            }
-            
+                        
             // 選択状態の判定（ローカル選択状態のみ表示）
             const isSelectedByLocal = localSelectedChair === chairNumber;
             const isSelected = isSelectedByLocal;
@@ -806,7 +672,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
                 key={chairNumber}
                 className={`chair ${isAvailable ? 'available' : 'unavailable'} ${isSelected ? 'selected' : ''} ${isUsed ? 'used' : ''}`}
                 onClick={() => {
-                  console.log(`イス${chairNumber}クリック試行:`, { canClick, isAvailable, myTurn });
+                  
                   if (canClick) {
                     handleChairClick(chairNumber);
                   }
