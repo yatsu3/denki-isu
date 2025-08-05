@@ -32,7 +32,7 @@ function TopPage() {
           部屋に入る
         </button>
         <button className="button single-player-button" onClick={handleSinglePlayer}>
-          🤖 1人で遊ぶ（AI対戦）
+          1人で遊ぶ（AI対戦）
         </button>
       </div>
       
