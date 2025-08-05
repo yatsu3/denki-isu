@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './GameRoom.css';
 
@@ -17,8 +17,6 @@ const SinglePlayer = () => {
   });
 
   const [selectedChair, setSelectedChair] = useState(null);
-  const [commentInput, setCommentInput] = useState('');
-  const [commentInputVisible, setCommentInputVisible] = useState(false);
   const [result, setResult] = useState(null);
   const [isSoundEnabled, setIsSoundEnabled] = useState(true);
   const [audioLoaded, setAudioLoaded] = useState(false);
@@ -326,6 +324,7 @@ const SinglePlayer = () => {
                     gameState.usedChairs.length >= 11; // 残り椅子が1つになったら終了
 
   // 勝利判定
+  // eslint-disable-next-line
   const getWinner = () => {
     if (gameState.playerShockCount >= 3) return 'AI';
     if (gameState.aiShockCount >= 3) return 'あなた';
@@ -358,23 +357,7 @@ const SinglePlayer = () => {
   // ゲーム終了画面
   if (isGameOver) {
     const winner = getWinner();
-    const getVictoryCondition = () => {
-      if (gameState.playerShockCount >= 3) return 'AIが3回電流を食らわせた';
-      if (gameState.aiShockCount >= 3) return 'あなたが3回電流を食らわせた';
-      if (gameState.playerScore >= 40) return 'あなたが40点以上獲得';
-      if (gameState.aiScore >= 40) return 'AIが40点以上獲得';
-      if (gameState.usedChairs.length >= 11) return '残り椅子が1つになった';
-      return '8ラウンド終了時の得点差';
-    };
     
-    const shareText = `電気イスゲーム 1人プレイ結果\n勝者: ${winner}\n勝利条件: ${getVictoryCondition()}\nあなた: ${gameState.playerScore}点/電流${gameState.playerShockCount}回\nAI: ${gameState.aiScore}点/電流${gameState.aiShockCount}回`;
-    const shareUrl = encodeURIComponent(window.location.origin);
-    const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${shareUrl}`;
-
-    const handleShareX = () => {
-      window.open(tweetUrl, '_blank', 'noopener');
-    };
-
     return (
       <div className="game-room end-screen-bg">
         <div className="end-screen-card">

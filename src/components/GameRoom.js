@@ -30,7 +30,6 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
   const [gameState, setGameState] = useState(initialGameState);
 
   const [localSelectedChair, setLocalSelectedChair] = useState(null); // ローカル選択状態
-  const [isMyTurnState, setIsMyTurnState] = useState(false);
   const [gameStarted, setGameStarted] = useState(initialGameStarted);
   const [connectionStatus, setConnectionStatus] = useState('connecting');
   const [showResult, setShowResult] = useState(false);
@@ -265,7 +264,6 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
       const myPlayerType = actualIsHost ? 'player1' : 'player2';
       const wasMyTurn = gameState.currentTurn === myPlayerType;
       const isMyTurn = newState.currentTurn === myPlayerType;
-      setIsMyTurnState(isMyTurn);
       
       if (wasMyTurn !== isMyTurn) {
         
@@ -500,7 +498,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
         <h2>ゲーム待機中</h2>
         <p>部屋番号: {actualRoomCode}</p>
         <p>他のプレイヤーの参加を待っています...</p>
-        <button onClick={handleBackToTop}>トップページに戻る</button>
+        <button onClick={handleBackToTop}>トップに戻る</button>
       </div>
     );
   }
@@ -509,7 +507,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     return (
       <div className="game-room">
         <h2>相手プレイヤーが切断しました</h2>
-        <button onClick={handleBackToTop}>トップページに戻る</button>
+        <button onClick={handleBackToTop}>トップに戻る</button>
       </div>
     );
   }
@@ -548,7 +546,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
             <button className="x-share-btn" onClick={handleShareX} title="Xで結果を共有">
               <span className="x-logo">&#120143;</span> 結果をXで共有
             </button>
-            <button className="button back-button end-btn" onClick={handleBackToTop}>トップページに戻る</button>
+            <button className="button back-button end-btn" onClick={handleBackToTop}>トップに戻る</button>
           </div>
         </div>
       </div>
