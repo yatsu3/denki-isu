@@ -588,7 +588,6 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     <div className="game-container">
       <div className="game-header">
         <div className="header-top">
-          <h2>電気イスゲーム</h2>
           <button 
             className="sound-toggle-btn"
             onClick={toggleSound}

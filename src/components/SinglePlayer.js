@@ -97,17 +97,6 @@ const SinglePlayer = () => {
 
   // 音声ON/OFF切り替え
   const toggleSound = () => {
-    if (!isSoundEnabled) {
-      // 音声をONにする際に、ブラウザの自動再生ポリシーに対応するため
-      // 無音の音声を再生してユーザーインタラクションを記録
-      if (audioRefs.current.shock) {
-        const audio = audioRefs.current.shock;
-        audio.volume = 0;
-        audio.play().then(() => {
-          audio.volume = 0.5;
-        }).catch(() => {});
-      }
-    }
     setIsSoundEnabled(!isSoundEnabled);
   };
 
@@ -489,17 +478,28 @@ const SinglePlayer = () => {
     <div className="game-container">
       <div className="game-header">
         <div className="header-top">
-          <h2>電気イスゲーム</h2>
-          <button 
-            className="sound-toggle-btn"
-            onClick={toggleSound}
-            title={isSoundEnabled ? '音量OFF' : '音量ON'}
-          >
-            {isSoundEnabled ? '🔊' : '🔇'}
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            <div style={{ 
+              background: 'rgba(255, 255, 255, 0.9)', 
+              padding: '8px 12px', 
+              borderRadius: '8px',
+              fontSize: '0.9rem',
+              fontWeight: 'bold',
+              color: '#333',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+            }}>
+              ラウンド: {gameState.currentRound}/8
+            </div>
+            <button 
+              className="sound-toggle-btn"
+              onClick={toggleSound}
+              title={isSoundEnabled ? '音量OFF' : '音量ON'}
+            >
+              {isSoundEnabled ? '🔊' : '🔇'}
+            </button>
+          </div>
         </div>
         <p>1人プレイモード</p>
-        <p>ラウンド: {gameState.currentRound}/8</p>
         <p>フェーズ: {gameState.currentPhase === 'attack' ? 'あなたが電流を流す' : 'あなたが椅子に座る'}</p>
       </div>
 
