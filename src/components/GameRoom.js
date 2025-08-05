@@ -588,17 +588,27 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
     <div className="game-container">
       <div className="game-header">
         <div className="header-top">
-          <button 
-            className="sound-toggle-btn"
-            onClick={toggleSound}
-            title={isSoundEnabled ? '音量OFF' : '音量ON'}
-          >
-            {isSoundEnabled ? '🔊' : '🔇'}
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            <div style={{ 
+              background: 'rgba(255, 255, 255, 0.9)', 
+              padding: '8px 12px', 
+              borderRadius: '8px',
+              fontSize: '0.9rem',
+              fontWeight: 'bold',
+              color: '#333',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+            }}>
+              ラウンド: {gameState.currentRound}/8
+            </div>
+            <button 
+              className="sound-toggle-btn"
+              onClick={toggleSound}
+              title={isSoundEnabled ? '音量OFF' : '音量ON'}
+            >
+              {isSoundEnabled ? '🔊' : '🔇'}
+            </button>
+          </div>
         </div>
-        <p>部屋番号: {actualRoomCode}</p>
-        <p>ラウンド: {gameState.currentRound}/8</p>
-        <p>フェーズ: {gameState.currentPhase === 'omote' ? '表の攻撃' : gameState.currentPhase === 'ura' ? '裏の攻撃' : '選択中'}</p>
       </div>
 
       <div className="score-board">

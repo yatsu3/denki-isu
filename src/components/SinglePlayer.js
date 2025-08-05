@@ -499,8 +499,6 @@ const SinglePlayer = () => {
             </button>
           </div>
         </div>
-        <p>1人プレイモード</p>
-        <p>フェーズ: {gameState.currentPhase === 'attack' ? 'あなたが電流を流す' : 'あなたが椅子に座る'}</p>
       </div>
 
       <div className="score-board">
