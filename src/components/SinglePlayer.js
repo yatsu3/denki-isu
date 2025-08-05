@@ -497,9 +497,17 @@ const SinglePlayer = () => {
             >
               {isSoundEnabled ? '🔊' : '🔇'}
             </button>
+            <p className="current-player">AI難易度: {
+          aiDifficulty === 'easy' ? '簡単' : 
+          aiDifficulty === 'normal' ? '普通' : '難しい'
+        }</p>
           </div>
         </div>
       </div>
+      <p style={{ color: '#28a745', fontWeight: 'bold', marginTop: '5px' }}>
+          ⚡ あなたのターンです ⚡
+        </p>
+
 
       <div className="score-board">
         <div className="player-score">
@@ -523,13 +531,6 @@ const SinglePlayer = () => {
       <div className="game-status">
         <p className="current-phase">
           {gameState.currentPhase === 'attack' ? 'あなたが電流を流すイスを選択してください' : 'あなたが座るイスを選択してください'}
-        </p>
-        <p className="current-player">AI難易度: {
-          aiDifficulty === 'easy' ? '簡単' : 
-          aiDifficulty === 'normal' ? '普通' : '難しい'
-        }</p>
-        <p style={{ color: '#28a745', fontWeight: 'bold', marginTop: '10px' }}>
-          ⚡ あなたのターンです ⚡
         </p>
       </div>
 
