@@ -13,6 +13,10 @@ function TopPage() {
     navigate('/join-room');
   };
 
+  const handleSinglePlayer = () => {
+    navigate('/single-player');
+  };
+
   return (
     <div className="container">
       <h1 className="title">⚡ 電気イスゲーム ⚡</h1>
@@ -26,6 +30,9 @@ function TopPage() {
         </button>
         <button className="button" onClick={handleJoinRoom}>
           部屋に入る
+        </button>
+        <button className="button single-player-button" onClick={handleSinglePlayer}>
+          🤖 1人で遊ぶ（AI対戦）
         </button>
       </div>
       

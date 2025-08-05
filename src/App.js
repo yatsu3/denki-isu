@@ -4,6 +4,7 @@ import TopPage from './components/TopPage';
 import CreateRoom from './components/CreateRoom';
 import JoinRoom from './components/JoinRoom';
 import GameRoom from './components/GameRoom';
+import SinglePlayer from './components/SinglePlayer';
 import ReleaseInfo from './components/ReleaseInfo';
 import Header from './components/Header';
 import HowToPlay from './components/HowToPlay';
@@ -41,6 +42,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/create-room" element={<CreateRoom />} />
           <Route path="/join-room" element={<JoinRoom />} />
+          <Route path="/single-player" element={<SinglePlayer />} />
           <Route path="/game/:roomId" element={<GameRoom roomCode={null} isHost={false} />} />
           <Route path="/release-info" element={<ReleaseInfo />} />
         </Routes>
