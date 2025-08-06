@@ -40,7 +40,6 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
   const [isSoundEnabled, setIsSoundEnabled] = useState(true); // 音量ON/OFF状態
   const [audioLoaded, setAudioLoaded] = useState(false); // 音声ファイル読み込み状態
 
-  const [playerName] = useState(actualIsHost ? 'プレイヤー1' : 'プレイヤー2');
   const getPlayerType = useCallback(() => (actualIsHost ? 'player1' : 'player2'), [actualIsHost]);
   const [opponentDisconnected, setOpponentDisconnected] = useState(false);
 
