@@ -504,10 +504,9 @@ const SinglePlayer = () => {
           </div>
         </div>
       </div>
-      <p style={{ color: '#28a745', fontWeight: 'bold', marginTop: '5px' }}>
+      <p style={{ color: '#28a745', fontWeight: 'bold', marginBottom: '10px' }}>
           ⚡ あなたのターンです ⚡
-        </p>
-
+      </p>
 
       <div className="score-board">
         <div className="player-score">
@@ -515,7 +514,7 @@ const SinglePlayer = () => {
           <p>ポイント: {gameState.playerScore}</p>
           <p>電流: {gameState.playerShockCount}回</p>
           <p className="player-status">
-            {gameState.currentPhase === 'attack' ? '⚡ 電流を流す' : '椅子に座る'}
+            {gameState.currentPhase === 'attack' ? '電流を流す' : '椅子に座る'}
           </p>
         </div>
         <div className="player-score">
@@ -523,14 +522,14 @@ const SinglePlayer = () => {
           <p>ポイント: {gameState.aiScore}</p>
           <p>電流: {gameState.aiShockCount}回</p>
           <p className="player-status">
-            {gameState.currentPhase === 'attack' ? '椅子に座る' : '⚡ 電流を流す'}
+            {gameState.currentPhase === 'attack' ? '椅子に座る' : '電流を流す'}
           </p>
         </div>
       </div>
 
       <div className="game-status">
         <p className="current-phase">
-          {gameState.currentPhase === 'attack' ? 'あなたが電流を流すイスを選択してください' : 'あなたが座るイスを選択してください'}
+          {gameState.currentPhase === 'attack' ? '電流を流すイスを選択してください' : '座るイスを選択してください'}
         </p>
       </div>
 
