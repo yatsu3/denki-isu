@@ -464,15 +464,15 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
   const getCurrentPhaseText = () => {
     if (gameState.currentPhase === 'omote') {
       if (gameState.currentTurn === 'player1') {
-        return '表の攻撃: プレイヤー1が電流を流すイスを選択中';
+        return 'プレイヤー1が電流を流すイスを選択中';
       } else {
-        return '表の攻撃: プレイヤー2が座るイスを選択中';
+        return 'プレイヤー2が座るイスを選択中';
       }
     } else if (gameState.currentPhase === 'ura') {
       if (gameState.currentTurn === 'player2') {
-        return '裏の攻撃: プレイヤー2が電流を流すイスを選択中';
+        return 'プレイヤー2が電流を流すイスを選択中';
       } else {
-        return '裏の攻撃: プレイヤー1が座るイスを選択中';
+        return 'プレイヤー1が座るイスを選択中';
       }
     } else {
       return '選択中';
@@ -610,6 +610,12 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
           </div>
         </div>
       </div>
+      {checkIsMyTurn() && (
+          <p style={{ color: '#28a745', fontWeight: 'bold', marginTop: '5px' }}>
+            あなたのターンです
+          </p>
+        )}
+
 
       <div className="score-board">
         <div className="player-score">
@@ -632,13 +638,6 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
 
       <div className="game-status">
         <p className="current-phase">{getCurrentPhaseText()}</p>
-        <p className="current-player">あなた: {playerName}</p>
-        {checkIsMyTurn() && (
-          <p style={{ color: '#28a745', fontWeight: 'bold', marginTop: '10px' }}>
-            ⚡ あなたのターンです ⚡
-          </p>
-        )}
-
       </div>
 
       {/* コメント入力欄（攻撃側のみ、かつ未確定時のみ） */}
