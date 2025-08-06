@@ -54,9 +54,9 @@ const Header = () => {
           <ul className={`nav-list ${isMenuOpen ? 'active' : ''}`}>
             <li><Link to="/" onClick={closeMenu}>トップ</Link></li>
             <li><Link to="/how-to-play" onClick={closeMenu}>遊び方</Link></li>
-            <li><Link to="/terms" onClick={closeMenu}>利用規約</Link></li>
             <li><Link to="/contact" onClick={closeMenu}>問い合わせ</Link></li>
             <li><Link to="/release-info" onClick={closeMenu}>リリース情報</Link></li>
+            <li><Link to="/terms" onClick={closeMenu}>利用規約</Link></li>
           </ul>
         </div>
       </nav>
