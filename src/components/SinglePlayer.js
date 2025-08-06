@@ -505,7 +505,7 @@ const SinglePlayer = () => {
         </div>
       </div>
       <p style={{ color: '#28a745', fontWeight: 'bold', marginBottom: '10px' }}>
-          ⚡ あなたのターンです ⚡
+      {gameState.currentPhase === 'attack' ? '電流を流すイスを選択してください' : '座るイスを選択してください'}
       </p>
 
       <div className="score-board">
@@ -527,11 +527,11 @@ const SinglePlayer = () => {
         </div>
       </div>
 
-      <div className="game-status">
+      {/* <div className="game-status">
         <p className="current-phase">
           {gameState.currentPhase === 'attack' ? '電流を流すイスを選択してください' : '座るイスを選択してください'}
         </p>
-      </div>
+      </div> */}
 
       <div className="chairs-container">
         <div className="chairs-grid">

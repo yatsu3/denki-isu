@@ -5,6 +5,7 @@
   background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  min-height: 600px;
 }
 
 .game-header {
@@ -135,6 +136,7 @@
   gap: 15px;
   max-width: 600px;
   margin: 0 auto;
+  min-height: 400px;
 }
 
 .chair {
@@ -148,6 +150,8 @@
   cursor: pointer;
   transition: all 0.3s ease;
   border: 3px solid transparent;
+  position: relative;
+  overflow: hidden;
 }
 
 .chair.available {
@@ -157,7 +161,7 @@
 }
 
 .chair.available:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
@@ -170,9 +174,22 @@
 
 .chair.selected {
   background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-  transform: scale(1.05);
   box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
   border-color: #fff;
+  position: relative;
+}
+
+.chair.selected::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+  border-radius: 15px;
+  z-index: -1;
+  animation: selectedPulse 1.5s ease-in-out infinite;
 }
 
 .chair.used {
@@ -334,6 +351,12 @@
   0% { transform: scale(1); }
   50% { transform: scale(1.05); }
   100% { transform: scale(1); }
+}
+
+@keyframes selectedPulse {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { opacity: 0.8; }
 }
 
 @keyframes bounce {
