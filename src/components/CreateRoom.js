@@ -112,6 +112,16 @@ function CreateRoom() {
     }
   };
 
+  const shareOnTwitter = () => {
+    if (!roomCode) return;
+    
+    const text = `⚡電気イスゲーム⚡\n\n部屋番号: ${roomCode}\n\n一緒に遊びませんか？\n\n${window.location.origin}\n\n#電気イスゲーム`;
+    
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+    
+    window.open(twitterUrl, '_blank', 'width=600,height=400');
+  };
+
   const retryConnection = () => {
     setError('');
     initializeRoom();
@@ -180,6 +190,50 @@ function CreateRoom() {
         <p style={{ fontSize: '0.9rem', color: '#666' }}>
           {roomCode ? '部屋番号をクリックしてコピーできます' : '部屋番号を生成中です'}
         </p>
+        
+        {roomCode && (
+          <div style={{ marginTop: '15px', textAlign: 'center' }}>
+            <button 
+              onClick={shareOnTwitter}
+              style={{
+                backgroundColor: '#1da1f2',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '12px 20px',
+                fontSize: '1rem',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 8px rgba(29, 161, 242, 0.3)'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = '#1a8cd8';
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 4px 12px rgba(29, 161, 242, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = '#1da1f2';
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 2px 8px rgba(29, 161, 242, 0.3)';
+              }}
+              onTouchStart={(e) => {
+                e.target.style.backgroundColor = '#1a8cd8';
+                e.target.style.transform = 'scale(0.98)';
+              }}
+              onTouchEnd={(e) => {
+                e.target.style.backgroundColor = '#1da1f2';
+                e.target.style.transform = 'scale(1)';
+              }}
+            >
+              <span style={{ fontSize: '1.2rem' }}>🐦</span>
+              Twitterで共有
+            </button>
+          </div>
+        )}
       </div>
 
       {isWaiting && roomCode && (
