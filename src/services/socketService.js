@@ -88,9 +88,15 @@ class SocketService {
   // socketioの切断
   disconnect() {
     if (this.socket) {
+      // 部屋から退出する処理を追加
+      if (this.roomCode) {
+        this.socket.emit('leaveRoom', { roomCode: this.roomCode });
+      }
       this.socket.disconnect();
       this.socket = null;
       this.isConnected = false;
+      this.roomCode = null;
+      this.isHost = false;
     }
   }
 

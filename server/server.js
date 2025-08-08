@@ -550,6 +550,38 @@ io.on('connection', (socket) => {
     console.log('=== confirmSelectionイベント処理終了 ===');
   });
 
+  // 部屋退出処理
+  socket.on('leaveRoom', ({ roomCode }) => {
+    console.log('部屋退出リクエスト受信:', { roomCode, socketId: socket.id });
+    
+    const room = rooms.get(roomCode);
+    if (!room) {
+      console.log('退出しようとした部屋が見つかりません:', roomCode);
+      return;
+    }
+
+    const playerIndex = room.players.indexOf(socket.id);
+    if (playerIndex === -1) {
+      console.log('プレイヤーが部屋に参加していません:', { roomCode, socketId: socket.id });
+      return;
+    }
+
+    console.log('プレイヤーが部屋から退出:', { roomCode, socketId: socket.id, playerIndex });
+    room.players.splice(playerIndex, 1);
+    socket.leave(roomCode);
+    
+    if (room.players.length === 0) {
+      // 部屋が空になったら削除
+      rooms.delete(roomCode);
+      console.log(`部屋が削除されました: ${roomCode}`);
+    } else {
+      // 残りのプレイヤーに通知
+      console.log('残りのプレイヤーに退出通知:', { roomCode, remainingPlayers: room.players });
+      io.to(roomCode).emit('playerDisconnected');
+      console.log(`プレイヤーが部屋から退出しました: ${roomCode}`);
+    }
+  });
+
   // 切断処理
   socket.on('disconnect', (reason) => {
     console.log('ユーザーが切断しました:', socket.id, '理由:', reason);
