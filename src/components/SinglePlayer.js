@@ -18,7 +18,7 @@ const SinglePlayer = () => {
 
   const [selectedChair, setSelectedChair] = useState(null);
   const [result, setResult] = useState(null);
-  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
+  const [isSoundEnabled, setIsSoundEnabled] = useState(false);
   const [audioLoaded, setAudioLoaded] = useState(false);
   const audioRefs = useRef({});
 

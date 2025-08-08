@@ -37,7 +37,7 @@ const GameRoom = ({ roomCode: propRoomCode, isHost: propIsHost }) => {
   const [comment, setComment] = useState(''); // 自分のコメント
   const [opponentComment, setOpponentComment] = useState(''); // 相手のコメント
   const [commentInputVisible, setCommentInputVisible] = useState(true); // コメント入力欄の表示制御
-  const [isSoundEnabled, setIsSoundEnabled] = useState(true); // 音量ON/OFF状態
+  const [isSoundEnabled, setIsSoundEnabled] = useState(false); // 音量ON/OFF状態
   const [audioLoaded, setAudioLoaded] = useState(false); // 音声ファイル読み込み状態
 
   const getPlayerType = useCallback(() => (actualIsHost ? 'player1' : 'player2'), [actualIsHost]);
