@@ -229,8 +229,7 @@ function CreateRoom() {
                 e.target.style.transform = 'scale(1)';
               }}
             >
-              <span style={{ fontSize: '1.2rem' }}>🐦</span>
-              Twitterで共有
+              X（旧Twitter）で対戦相手を募る
             </button>
           </div>
         )}
