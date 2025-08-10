@@ -48,7 +48,7 @@ const HowToPlay = () => {
         </h3>
         <center><img src="/images/winner.png" alt="勝利条件" style={{ width: '100%', maxWidth: '250px', marginBottom: '20px' }} /></center>
         <p style={{ marginBottom: '20px', paddingLeft: '15px' }}>
-          8ラウンド終了時点でポイントが多い方が勝利します。また、相手に3回電流を食らわせた方も勝利となります。どちらかの条件を満たした時点でゲームが終了します。
+          40点以上ポイントを取得や8ラウンド終了時点でポイントが多い方が勝利します。また、相手に3回電流を食らわせた方も勝利となります。どれかの条件を満たした時点でゲームが終了します。
         </p>
 
         <h3 style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#333', borderLeft: '4px solid #ff6b6b', paddingLeft: '15px', marginTop: '30px', marginBottom: '15px' }}>
