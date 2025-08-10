@@ -1,8 +1,6 @@
 import React from 'react';
 
 const ReleaseInfo = () => {
-  console.log('PUBLIC_URL:', process.env.PUBLIC_URL);
-  console.log('Full image path:', `${process.env.PUBLIC_URL}/images/battle.png`);
   
   return (
     <div className="container">
@@ -11,15 +9,21 @@ const ReleaseInfo = () => {
       </h2>
       
       <div style={{ textAlign: 'left', color: '#444', fontSize: '1.15rem', lineHeight: 1.8 }}>
-      <h3 style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#333', borderLeft: '4px solid #ff6b6b', paddingLeft: '15px', marginTop: '30px', marginBottom: '15px' }}>
+        <h3 style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#333', borderLeft: '4px solid #ff6b6b', paddingLeft: '15px', marginTop: '30px', marginBottom: '15px' }}>
           2025-08-10
         </h3>
         <p style={{ marginBottom: '20px', paddingLeft: '15px' }}>
-リリース情報ページのデザインを修正しました。特に大きなアップデートがあったものに関しては画像付きで分かりやすいように表示しています。        </p>
+          リリース情報ページのデザインを修正しました。特に大きなアップデートがあったものに関しては画像付きで分かりやすいように表示しています。
+        </p>
+        
         <h3 style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#333', borderLeft: '4px solid #ff6b6b', paddingLeft: '15px', marginTop: '30px', marginBottom: '15px' }}>
           2025-08-09
         </h3>
-        <center><img src="./images/battle.png" alt="X（Twitter）募集" style={{ width: '100%', maxWidth: '400px', marginBottom: '20px' }} /></center>
+        <center><img 
+          src={`${window.location.origin}/images/battle.png`} 
+          alt="X（Twitter）募集" 
+          style={{ width: '100%', maxWidth: '400px', marginBottom: '20px' }}
+        /></center>
         <p style={{ marginBottom: '20px', paddingLeft: '15px' }}>
           2人プレイモードでX（旧Twitter）で対戦相手を募るボタンを追加しました。ゲーム画面のレイアウト崩れ（イス選択時の白背景拡大）を修正し、PC・モバイル両方で安定した表示になりました。サウンド設定のデフォルトをOFFに変更し、部屋作成画面にTwitter共有ボタンを追加しました。また、戻るボタンを押した際の部屋退出処理も改善しました。
         </p>
@@ -27,7 +31,11 @@ const ReleaseInfo = () => {
         <h3 style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#333', borderLeft: '4px solid #ff6b6b', paddingLeft: '15px', marginTop: '30px', marginBottom: '15px' }}>
           2025-08-05
         </h3>
-        <center><img src="./images/one.png" alt="1人プレイモード" style={{ width: '100%', maxWidth: '400px', marginBottom: '20px' }} /></center>
+        <center><img 
+          src={`${window.location.origin}/images/one.png`} 
+          alt="1人プレイモード" 
+          style={{ width: '100%', maxWidth: '400px', marginBottom: '20px' }}
+        /></center>
         <p style={{ marginBottom: '20px', paddingLeft: '15px' }}>
           1人プレイモード（AI対戦）を追加しました。AIの難易度を選択でき、一人でも楽しめるようになりました。
         </p>
