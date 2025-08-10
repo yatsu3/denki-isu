@@ -20,7 +20,7 @@ const ReleaseInfo = () => {
           2025-08-09
         </h3>
         <center><img 
-          src={`${window.location.origin}/images/battle.png`} 
+          src="/images/battle.png" 
           alt="X（Twitter）募集" 
           style={{ width: '100%', maxWidth: '400px', marginBottom: '20px' }}
         /></center>
@@ -32,7 +32,7 @@ const ReleaseInfo = () => {
           2025-08-05
         </h3>
         <center><img 
-          src={`${window.location.origin}/images/one.png`} 
+          src="/images/one.png" 
           alt="1人プレイモード" 
           style={{ width: '100%', maxWidth: '400px', marginBottom: '20px' }}
         /></center>

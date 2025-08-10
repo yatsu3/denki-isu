@@ -12,7 +12,7 @@ const HowToPlay = () => {
         <h3 style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#333', borderLeft: '4px solid #ff6b6b', paddingLeft: '15px', marginTop: '30px', marginBottom: '15px' }}>
           ゲームの目的
         </h3>
-        <center><img src={`${window.location.origin}/images/purpose.png`} alt="ゲームの目的" style={{ width: '100%', maxWidth: '250px', marginBottom: '20px' }} /></center>
+        <center><img src="/images/purpose.png" alt="ゲームの目的" style={{ width: '100%', maxWidth: '250px', marginBottom: '20px' }} /></center>
         <p style={{ marginBottom: '20px', paddingLeft: '15px' }}>
           電気イスゲームは、1vs1の心理戦ゲームです。相手の心理を読み、電流を流すイスと座るイスを選択し合い、8ラウンド終了時点でポイントが多い方が勝利します。また、相手に3回電流を食らわせた方も勝利となります。
         </p>
@@ -20,7 +20,7 @@ const HowToPlay = () => {
         <h3 style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#333', borderLeft: '4px solid #ff6b6b', paddingLeft: '15px', marginTop: '30px', marginBottom: '15px' }}>
           ゲームの流れ
         </h3>
-        <center><img src={`${window.location.origin}/images/map.png`} alt="ゲームの流れ" style={{ width: '100%', maxWidth: '250px', marginBottom: '20px' }} /></center>
+        <center><img src="/images/map.png" alt="ゲームの流れ" style={{ width: '100%', maxWidth: '250px', marginBottom: '20px' }} /></center>
         <p style={{ marginBottom: '20px', paddingLeft: '15px' }}>
           1から12までの数字が書かれた12脚のイスが用意されています。各イスには対応する数字のポイントが設定されており、電流が仕掛けられていないイスに座ることができればそのポイントを獲得できます。
         </p>
@@ -30,7 +30,7 @@ const HowToPlay = () => {
         <h3 style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#333', borderLeft: '4px solid #ff6b6b', paddingLeft: '15px', marginTop: '30px', marginBottom: '15px' }}>
           ポイントの獲得
         </h3>
-        <center><img src={`${window.location.origin}/images/point.png`} alt="ポイントの獲得" style={{ width: '100%', maxWidth: '250px', marginBottom: '20px' }} /></center>
+        <center><img src="/images/point.png" alt="ポイントの獲得" style={{ width: '100%', maxWidth: '250px', marginBottom: '20px' }} /></center>
         <p style={{ marginBottom: '20px', paddingLeft: '15px' }}>
           電流が仕掛けられていないイスに座ることができたら、そのイスの数字が書かれているポイントを獲得できます。例えば、5番のイスに座れば5ポイントを獲得できます。
         </p>
@@ -38,7 +38,7 @@ const HowToPlay = () => {
         <h3 style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#333', borderLeft: '4px solid #ff6b6b', paddingLeft: '15px', marginTop: '30px', marginBottom: '15px' }}>
           電流のペナルティ
         </h3>
-        <center><img src={`${window.location.origin}/images/lose.png`} alt="電流のペナルティ" style={{ width: '100%', maxWidth: '250px', marginBottom: '20px' }} /></center>
+        <center><img src="/images/lose.png" alt="電流のペナルティ" style={{ width: '100%', maxWidth: '250px', marginBottom: '20px' }} /></center>
         <p style={{ marginBottom: '20px', paddingLeft: '15px' }}>
           電流が仕掛けられたイスに座ってしまった場合、それまでに獲得したポイントを全て失います。また、電流を食らった回数が記録され、3回電流を食らったプレイヤーは即座に敗北となります。
         </p>
@@ -46,7 +46,7 @@ const HowToPlay = () => {
         <h3 style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#333', borderLeft: '4px solid #ff6b6b', paddingLeft: '15px', marginTop: '30px', marginBottom: '15px' }}>
           勝利条件
         </h3>
-        <center><img src={`${window.location.origin}/images/winner.png`} alt="勝利条件" style={{ width: '100%', maxWidth: '250px', marginBottom: '20px' }} /></center>
+        <center><img src="/images/winner.png" alt="勝利条件" style={{ width: '100%', maxWidth: '250px', marginBottom: '20px' }} /></center>
         <p style={{ marginBottom: '20px', paddingLeft: '15px' }}>
           8ラウンド終了時点でポイントが多い方が勝利します。また、相手に3回電流を食らわせた方も勝利となります。どちらかの条件を満たした時点でゲームが終了します。
         </p>
@@ -54,7 +54,7 @@ const HowToPlay = () => {
         <h3 style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#333', borderLeft: '4px solid #ff6b6b', paddingLeft: '15px', marginTop: '30px', marginBottom: '15px' }}>
           戦略のヒント
         </h3>
-        <center><img src={`${window.location.origin}/images/11772_color.png`} alt="戦略のヒント" style={{ width: '100%', maxWidth: '200px', marginBottom: '20px' }} /></center>
+        <center><img src="/images/11772_color.png" alt="戦略のヒント" style={{ width: '100%', maxWidth: '200px', marginBottom: '20px' }} /></center>
         <p style={{ marginBottom: '20px', paddingLeft: '15px' }}>
           相手の選択パターンを観察し、心理を読み取ることが重要です。また、高ポイントのイスは魅力的ですが、相手も狙っている可能性が高いため、時には低ポイントのイスを選択することも有効な戦略となります。
         </p>
