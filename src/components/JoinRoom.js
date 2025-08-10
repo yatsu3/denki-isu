@@ -65,7 +65,7 @@ function JoinRoom() {
   };
 
   const handleInputChange = (e) => {
-    setRoomCode(e.target.value.toUpperCase());
+    setRoomCode(e.target.value);
     setError('');
   };
 
