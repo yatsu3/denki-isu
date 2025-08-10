@@ -99,7 +99,6 @@ function JoinRoom() {
           value={roomCode}
           onChange={handleInputChange}
           maxLength={10}
-          style={{ textTransform: 'uppercase' }}
           disabled={isJoining}
         />
       </div>
