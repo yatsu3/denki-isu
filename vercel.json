@@ -37,6 +37,13 @@
       "dest": "/sounds/$1"
     },
     {
+      "src": "/videos/(.*)",
+      "dest": "/videos/$1",
+      "headers": {
+        "Content-Type": "video/mp4"
+      }
+    },
+    {
       "src": "/favicon.ico",
       "dest": "/favicon.ico"
     },
