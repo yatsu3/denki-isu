@@ -234,6 +234,8 @@
   justify-content: center;
   gap: 20px;
   flex-wrap: wrap;
+  min-height: 80px;
+  padding: 20px 0;
 }
 
 .button {
@@ -385,7 +387,7 @@
 
 @media (max-width: 768px) {
   .game-container {
-    padding: 15px;
+      padding: 10px;
     min-height: 500px;
   }
   
@@ -436,6 +438,9 @@
     justify-content: center;
     gap: 10px;
     flex-wrap: wrap;
+    min-height: 70px;
+    min-width: 350px;
+    padding: 15px 0;
   }
   
   .game-controls .button {
@@ -452,7 +457,7 @@
 
 @media (max-width: 480px) {
   .game-container {
-    padding: 10px;
+    padding: 15px;
     min-height: 450px;
   }
   
@@ -494,6 +499,12 @@
   
   .current-player {
     font-size: 1rem;
+  }
+  
+  .game-controls {
+    min-height: 60px;
+    min-width: 320px;
+    padding: 10px 0;
   }
   
   .game-controls .button {
