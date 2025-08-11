@@ -7,6 +7,28 @@ const HowToPlay = () => {
       <h2 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#ff6b6b', marginBottom: '20px', textShadow: '2px 2px 4px rgba(0,0,0,0.07)' }}>
         遊び方
       </h2>
+      <div style={{ margin: '30px 0', textAlign: 'center' }}>
+          <div style={{ 
+            position: 'relative', 
+            width: '100%', 
+            maxWidth: '600px', 
+            margin: '0 auto',
+            borderRadius: '10px',
+            overflow: 'hidden',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+          }}>
+            <video
+              width="100%"
+              height="315"
+              controls
+              style={{ borderRadius: '10px' }}
+            >
+              <source src="/videos/gameplay.mp4" type="video/mp4" />
+              お使いのブラウザは動画再生に対応していません。
+            </video>
+          </div>
+        </div>
+
       
       <div style={{ textAlign: 'left', color: '#444', fontSize: '1.15rem', lineHeight: 1.8 }}>
         <h3 style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#333', borderLeft: '4px solid #ff6b6b', paddingLeft: '15px', marginTop: '30px', marginBottom: '15px' }}>
@@ -21,6 +43,8 @@ const HowToPlay = () => {
           ゲームの流れ
         </h3>
         <center><img src="/images/map.png" alt="ゲームの流れ" style={{ width: '100%', maxWidth: '250px', marginBottom: '20px' }} /></center>
+        
+        {/* 動画セクション */}
         <p style={{ marginBottom: '20px', paddingLeft: '15px' }}>
           1から12までの数字が書かれた12脚のイスが用意されています。各イスには対応する数字のポイントが設定されており、電流が仕掛けられていないイスに座ることができればそのポイントを獲得できます。
         </p>
