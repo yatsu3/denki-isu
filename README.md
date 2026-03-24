@@ -140,4 +140,5 @@ cd server && npm run dev
 
 ## ライセンス
 
-MIT License 
+MIT License
+
